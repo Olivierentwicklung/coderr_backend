@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "rest_framework.authtoken",
+    "users_auth_app.apps.UsersAuthAppConfig",
+    "uploads_app.apps.UploadsAppConfig",
 ]
 
 MIDDLEWARE = [
@@ -115,6 +117,8 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+AUTH_USER_MODEL = "users_auth_app.CustomUser"
 
 
 # Internationalization
