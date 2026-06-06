@@ -50,6 +50,19 @@ def customer_user():
 
 
 @pytest.fixture
+def second_customer_user():
+    """Create and return a second customer user."""
+    return User.objects.create_user(  # type:ignore
+        username="customer_jane",
+        email="customer_jane@test.com",
+        password="testpassword123",
+        type="customer",
+        first_name="Jane",
+        last_name="Doe",
+    )
+
+
+@pytest.fixture
 def business_user():
     """Create a business user."""
     return User.objects.create_user(  # type:ignore
@@ -163,3 +176,9 @@ def valid_profile_update_payload():
 def business_profiles_url():
     """Return business profiles list endpoint URL."""
     return reverse("business-profiles")
+
+
+@pytest.fixture
+def customer_profiles_url():
+    """Return customer profiles list endpoint URL."""
+    return reverse("customer-profiles")
