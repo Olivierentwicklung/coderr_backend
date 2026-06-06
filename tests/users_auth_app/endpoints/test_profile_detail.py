@@ -59,8 +59,6 @@ def test_profile_detail_returns_500_when_unexpected_error_happens(
     profile_detail_url,
     force_db_crash,
 ):
-    """Test unexpected database errors return HTTP 500."""
-    authenticated_business.raise_request_exception = False
 
     with force_db_crash:
         response = authenticated_business.get(profile_detail_url)
