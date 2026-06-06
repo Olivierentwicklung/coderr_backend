@@ -67,6 +67,23 @@ def business_user():
 
 
 @pytest.fixture
+def second_business_user():
+    """Create and return a second business user."""
+    return User.objects.create_user(  # type:ignore
+        username="second_business",
+        email="second_business@test.com",
+        password="testpassword123",
+        type="business",
+        first_name="Second",
+        last_name="Business",
+        location="Hamburg",
+        tel="222333444",
+        description="Second business description",
+        working_hours="8-16",
+    )
+
+
+@pytest.fixture
 def valid_registration_payload():
     """Valid registration payload."""
     return {
@@ -140,3 +157,9 @@ def valid_profile_update_payload():
         "working_hours": "10-18",
         "email": "new_email@business.de",
     }
+
+
+@pytest.fixture
+def business_profiles_url():
+    """Return business profiles list endpoint URL."""
+    return reverse("business-profiles")

@@ -9,6 +9,7 @@ from .permissions import IsProfileOwnerOrReadOnly
 from .serializers import (
     LoginSerializer,
     ProfileDetailSerializer,
+    ProfileListSerializer,
     RegistrationSerializer,
 )
 
@@ -109,3 +110,19 @@ class ProfileDetailView(generics.RetrieveUpdateAPIView):
     queryset = User.objects.all()
     serializer_class = ProfileDetailSerializer
     permission_classes = [IsAuthenticated, IsProfileOwnerOrReadOnly]
+
+
+class BusinessProfileListView(generics.ListAPIView):
+    """
+    API endpoint for listing business profiles.
+
+    Only authenticated users can retrieve this list.
+    The endpoint returns users whose type is business.
+    """
+
+    serializer_class = ProfileListSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):  # type:ignore
+        """Return all business users with related profile file."""
+        return User.objects.select_related("file").filter(type="business")
