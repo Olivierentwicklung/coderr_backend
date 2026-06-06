@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "users_auth_app.apps.UsersAuthAppConfig",
     "uploads_app.apps.UploadsAppConfig",
     "reviews_app.apps.ReviewsAppConfig",
+    "offers_app.apps.OffersAppConfig",
 ]
 
 MIDDLEWARE = [
