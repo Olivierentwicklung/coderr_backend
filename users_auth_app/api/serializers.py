@@ -1,0 +1,75 @@
+from django.contrib.auth import get_user_model
+from rest_framework import serializers
+
+User = get_user_model()
+
+
+class RegistrationSerializer(serializers.ModelSerializer):
+    """
+    Serializer for registering a new user.
+
+    Validates the registration data, ensures that both password fields
+    match, and creates a new user with a hashed password.
+    """
+
+    repeated_password = serializers.CharField(write_only=True)
+
+    class Meta:
+        """
+        Configuration for the RegistrationSerializer.
+        """
+
+        model = User
+        fields = [
+            "username",
+            "email",
+            "password",
+            "repeated_password",
+            "type",
+        ]
+        extra_kwargs = {
+            "password": {"write_only": True},
+        }
+
+    def validate(self, attrs):
+        """
+        Validate that the password and repeated password match.
+
+        Args:
+            attrs (dict): Incoming validated serializer data.
+
+        Returns:
+            dict: The validated data.
+
+        Raises:
+            serializers.ValidationError: If the passwords do not match.
+        """
+        if attrs["password"] != attrs["repeated_password"]:
+            raise serializers.ValidationError({"password": "Passwords do not match."})
+
+        return attrs
+
+    def create(self, validated_data):
+        """
+        Create and return a new user instance.
+
+        Removes the repeated_password field from the validated data and
+        creates the user using the custom user manager to ensure the
+        password is properly hashed.
+
+        Args:
+            validated_data (dict): Validated registration data.
+
+        Returns:
+            User: The newly created user instance.
+        """
+        validated_data.pop("repeated_password")
+
+        user = User.objects.create_user(  # type: ignore
+            username=validated_data["username"],
+            email=validated_data["email"],
+            password=validated_data["password"],
+            type=validated_data["type"],
+        )
+
+        return user
