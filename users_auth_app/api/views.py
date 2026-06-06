@@ -1,10 +1,17 @@
-from rest_framework import status
+from django.contrib.auth import get_user_model
+from rest_framework import generics, status
 from rest_framework.authtoken.models import Token
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .serializers import LoginSerializer, RegistrationSerializer
+from .serializers import (
+    LoginSerializer,
+    ProfileDetailSerializer,
+    RegistrationSerializer,
+)
+
+User = get_user_model()
 
 
 class RegistrationView(APIView):
@@ -88,3 +95,16 @@ class LoginView(APIView):
             },
             status=status.HTTP_200_OK,
         )
+
+
+class ProfileDetailView(generics.RetrieveAPIView):
+    """
+    API endpoint for retrieving a user profile.
+
+    Only authenticated users can access this endpoint.
+    The profile is retrieved by the user's primary key from the URL.
+    """
+
+    queryset = User.objects.all()
+    serializer_class = ProfileDetailSerializer
+    permission_classes = [IsAuthenticated]
