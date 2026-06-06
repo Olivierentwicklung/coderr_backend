@@ -2,8 +2,32 @@ import pytest
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.authtoken.models import Token
+from rest_framework.test import APIRequestFactory
+
+from users_auth_app.api.views import RegistrationView
 
 User = get_user_model()
+
+
+@pytest.mark.django_db
+def test_registration_performance_regression(
+    registration_url,
+    django_assert_num_queries,
+    valid_registration_payload,
+):
+    factory = APIRequestFactory()
+    request = factory.post(
+        registration_url,
+        valid_registration_payload,
+        format="json",
+    )
+
+    view = RegistrationView.as_view()
+
+    with django_assert_num_queries(7):
+        response = view(request)
+
+    assert response.status_code == 201
 
 
 @pytest.mark.django_db
@@ -252,3 +276,18 @@ def test_registration_response_does_not_return_password(
     assert response.status_code == status.HTTP_201_CREATED
     assert "password" not in response.data
     assert "repeated_password" not in response.data
+
+
+@pytest.mark.django_db
+def test_registration_returns_500_when_unexpected_error_happens(
+    api_client, registration_url, valid_registration_payload, force_db_crash
+):
+
+    with force_db_crash:
+        response = api_client.post(
+            registration_url,
+            valid_registration_payload,
+            format="json",
+        )
+
+    assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR

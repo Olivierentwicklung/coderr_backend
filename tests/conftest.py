@@ -1,5 +1,7 @@
 import pytest
 from django.contrib.auth import get_user_model
+from django.db import connection
+from django.db.utils import OperationalError
 from django.urls import reverse
 from rest_framework.test import APIClient
 
@@ -9,7 +11,25 @@ User = get_user_model()
 @pytest.fixture
 def api_client():
     """Return DRF API client."""
-    return APIClient()
+    client = APIClient()
+    client.raise_request_exception = False  # Only for Testing 500
+    return client
+
+
+class ForceDatabaseCrashWrapper:
+    """A clean interceptor that forces any SQL execution to crash instantly."""
+
+    def __call__(self, execute, sql, params, many, context):
+        raise OperationalError("Unexpected database error")
+
+
+@pytest.fixture
+def force_db_crash():
+    """
+    Fixture to force all database queries to fail within its context.
+    This wraps the entire request execution block, forcing a 500 status response
+    """
+    return connection.execute_wrapper(ForceDatabaseCrashWrapper())
 
 
 @pytest.fixture
