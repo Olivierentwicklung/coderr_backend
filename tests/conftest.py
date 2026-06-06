@@ -57,6 +57,12 @@ def business_user():
         email="business@test.com",
         password="testpassword123",
         type="business",
+        first_name="Max",
+        last_name="Mustermann",
+        location="Berlin",
+        tel="123456789",
+        description="Business description",
+        working_hours="9-17",
     )
 
 
@@ -94,3 +100,23 @@ def valid_login_business_user_payload(business_user):
         "username": business_user.username,
         "password": "testpassword123",
     }
+
+
+@pytest.fixture
+def profile_detail_url(business_user):
+    """Return profile detail endpoint URL."""
+    return reverse("profile-detail", kwargs={"pk": business_user.id})
+
+
+@pytest.fixture
+def authenticated_customer(api_client, customer_user):
+    """Return authenticated API client as customer."""
+    api_client.force_authenticate(user=customer_user)
+    return api_client
+
+
+@pytest.fixture
+def authenticated_business(api_client, business_user):
+    """Return authenticated API client as business."""
+    api_client.force_authenticate(user=business_user)
+    return api_client
