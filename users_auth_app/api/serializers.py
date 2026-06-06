@@ -98,12 +98,12 @@ class LoginSerializer(serializers.Serializer):
 
 
 class ProfileDetailSerializer(serializers.ModelSerializer):
-    """Serializer for retrieving public user profile data."""
+    """Serializer for retrieving and updating user profile data."""
 
     user = serializers.IntegerField(source="id", read_only=True)
 
     class Meta:
-        """Configuration for profile detail serialization."""
+        """Configure profile fields exposed by the API."""
 
         model = User
         fields = [
@@ -120,4 +120,9 @@ class ProfileDetailSerializer(serializers.ModelSerializer):
             "email",
             "created_at",
         ]
-        read_only_fields = fields
+        read_only_fields = [
+            "user",
+            "username",
+            "type",
+            "created_at",
+        ]
