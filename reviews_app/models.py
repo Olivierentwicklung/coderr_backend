@@ -32,7 +32,12 @@ class Review(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = ("reviewer", "business_user")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["reviewer", "business_user"],
+                name="unique_review_per_business_user",
+            )
+        ]
 
     def __str__(self):
         """
