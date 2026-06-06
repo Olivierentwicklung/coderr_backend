@@ -160,6 +160,7 @@ def test_profile_update_returns_500_when_unexpected_error_happens(
 @pytest.mark.django_db
 def test_profile_update_query_count_performance(
     django_assert_num_queries,
+    profile_update_url,
     business_user,
     valid_profile_update_payload,
 ):
@@ -171,7 +172,7 @@ def test_profile_update_query_count_performance(
     """
     factory = APIRequestFactory()
     request = factory.patch(
-        reverse("profile-detail", kwargs={"pk": business_user.id}),
+        profile_update_url,
         valid_profile_update_payload,
         format="json",
     )
