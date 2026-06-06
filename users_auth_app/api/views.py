@@ -33,24 +33,23 @@ class RegistrationView(APIView):
             Response:
                 - 201 CREATED: User successfully registered.
                 - 400 BAD REQUEST: Validation errors occurred.
+                - 500 INTERNAL SERVER ERROR if an unexpected database error occurs.
         """
         serializer = RegistrationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-        if serializer.is_valid():
-            user = serializer.save()
-            token, _ = Token.objects.get_or_create(user=user)
+        user = serializer.save()
+        token, _ = Token.objects.get_or_create(user=user)
 
-            return Response(
-                {
-                    "token": token.key,
-                    "username": user.username,  # type: ignore
-                    "email": user.email,  # type: ignore
-                    "user_id": user.id,  # type: ignore
-                },
-                status=status.HTTP_201_CREATED,
-            )
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                "token": token.key,
+                "username": user.username,  # type: ignore
+                "email": user.email,  # type: ignore
+                "user_id": user.id,  # type: ignore
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
 
 class LoginView(APIView):
