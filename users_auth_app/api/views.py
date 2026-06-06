@@ -5,6 +5,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from .permissions import IsProfileOwnerOrReadOnly
 from .serializers import (
     LoginSerializer,
     ProfileDetailSerializer,
@@ -97,14 +98,14 @@ class LoginView(APIView):
         )
 
 
-class ProfileDetailView(generics.RetrieveAPIView):
+class ProfileDetailView(generics.RetrieveUpdateAPIView):
     """
-    API endpoint for retrieving a user profile.
+    API endpoint for retrieving and updating user profiles.
 
-    Only authenticated users can access this endpoint.
-    The profile is retrieved by the user's primary key from the URL.
+    Authenticated users can retrieve profiles.
+    Only the profile owner can update their own profile.
     """
 
     queryset = User.objects.all()
     serializer_class = ProfileDetailSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsProfileOwnerOrReadOnly]

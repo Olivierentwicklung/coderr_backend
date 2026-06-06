@@ -120,3 +120,23 @@ def authenticated_business(api_client, business_user):
     """Return authenticated API client as business."""
     api_client.force_authenticate(user=business_user)
     return api_client
+
+
+@pytest.fixture
+def profile_update_url(business_user):
+    """Return profile update endpoint URL."""
+    return reverse("profile-detail", kwargs={"pk": business_user.id})
+
+
+@pytest.fixture
+def valid_profile_update_payload():
+    """Return valid profile update payload."""
+    return {
+        "first_name": "Max",
+        "last_name": "Mustermann",
+        "location": "Berlin",
+        "tel": "987654321",
+        "description": "Updated business description",
+        "working_hours": "10-18",
+        "email": "new_email@business.de",
+    }
