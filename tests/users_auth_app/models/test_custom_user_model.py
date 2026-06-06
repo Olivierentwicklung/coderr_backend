@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 def test_create_customer_user():
     User = get_user_model()
 
-    user = User.objects.create_user(  # type:ignore
+    user = User.objects.create_user(  # type: ignore[attr-defined]
         username="customer1",
         email="customer@test.com",
         password="testpass123",
@@ -23,7 +23,7 @@ def test_create_customer_user():
 def test_create_business_user():
     User = get_user_model()
 
-    user = User.objects.create_user(  # type:ignore
+    user = User.objects.create_user(  # type: ignore
         username="business1",
         email="business@test.com",
         password="testpass123",
@@ -31,4 +31,17 @@ def test_create_business_user():
     )
 
     assert user.type == "business"
-    assert str(user) == "business1"
+
+
+@pytest.mark.django_db
+def test_custom_user_string_representation():
+    User = get_user_model()
+
+    user = User.objects.create_user(  # type: ignore
+        username="customer1",
+        email="customer@test.com",
+        password="testpass123",
+        type="customer",
+    )
+
+    assert str(user) == "customer1"
