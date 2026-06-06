@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import authenticate, get_user_model
 from rest_framework import serializers
 
 User = get_user_model()
@@ -73,3 +73,25 @@ class RegistrationSerializer(serializers.ModelSerializer):
         )
 
         return user
+
+
+class LoginSerializer(serializers.Serializer):
+    """Serializer for user login."""
+
+    username = serializers.CharField()
+    password = serializers.CharField(write_only=True)
+
+    def validate(self, attrs):
+        """Validate credentials and attach the authenticated user."""
+        user = authenticate(
+            username=attrs.get("username"),
+            password=attrs.get("password"),
+        )
+
+        if user is None:
+            raise serializers.ValidationError(
+                {"detail": "Invalid username or password."}
+            )
+
+        attrs["user"] = user
+        return attrs

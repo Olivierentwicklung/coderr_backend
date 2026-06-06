@@ -70,3 +70,27 @@ def valid_registration_payload():
         "repeated_password": "examplePassword",
         "type": "customer",
     }
+
+
+@pytest.fixture
+def login_url():
+    """Return login endpoint URL."""
+    return reverse("login")
+
+
+@pytest.fixture
+def valid_login_custom_user_payload(customer_user):
+    """Return valid login payload."""
+    return {
+        "username": customer_user.username,
+        "password": "testpassword123",
+    }
+
+
+@pytest.fixture
+def valid_login_business_user_payload(business_user):
+    """Return valid login payload."""
+    return {
+        "username": business_user.username,
+        "password": "testpassword123",
+    }
