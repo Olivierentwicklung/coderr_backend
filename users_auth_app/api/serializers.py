@@ -126,3 +126,27 @@ class ProfileDetailSerializer(serializers.ModelSerializer):
             "type",
             "created_at",
         ]
+
+
+class ProfileListSerializer(serializers.ModelSerializer):
+    """Serializer for listing public profile data."""
+
+    user = serializers.IntegerField(source="id", read_only=True)
+
+    class Meta:
+        """Configure fields returned in profile list endpoints."""
+
+        model = User
+        fields = [
+            "user",
+            "username",
+            "first_name",
+            "last_name",
+            "file",
+            "location",
+            "tel",
+            "description",
+            "working_hours",
+            "type",
+        ]
+        read_only_fields = fields
