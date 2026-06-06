@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "users_auth_app.apps.UsersAuthAppConfig",
+    "uploads_app.apps.UploadsAppConfig",
 ]
 
 MIDDLEWARE = [
