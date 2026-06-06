@@ -7,9 +7,10 @@ from rest_framework.views import APIView
 
 from .permissions import IsProfileOwnerOrReadOnly
 from .serializers import (
+    BusinessProfileListSerializer,
+    CustomerProfileListSerializer,
     LoginSerializer,
     ProfileDetailSerializer,
-    ProfileListSerializer,
     RegistrationSerializer,
 )
 
@@ -120,9 +121,25 @@ class BusinessProfileListView(generics.ListAPIView):
     The endpoint returns users whose type is business.
     """
 
-    serializer_class = ProfileListSerializer
+    serializer_class = BusinessProfileListSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):  # type:ignore
         """Return all business users with related profile file."""
         return User.objects.select_related("file").filter(type="business")
+
+
+class CustomerProfileListView(generics.ListAPIView):
+    """
+    API endpoint for listing customer profiles.
+
+    Only authenticated users can retrieve this list.
+    The endpoint returns users whose type is customer.
+    """
+
+    serializer_class = CustomerProfileListSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):  # type:ignore
+        """Return all users with the customer profile type."""
+        return User.objects.select_related("file").filter(type="customer")

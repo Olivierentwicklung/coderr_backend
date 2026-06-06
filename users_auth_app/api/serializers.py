@@ -128,7 +128,7 @@ class ProfileDetailSerializer(serializers.ModelSerializer):
         ]
 
 
-class ProfileListSerializer(serializers.ModelSerializer):
+class BusinessProfileListSerializer(serializers.ModelSerializer):
     """Serializer for listing public profile data."""
 
     user = serializers.IntegerField(source="id", read_only=True)
@@ -150,3 +150,29 @@ class ProfileListSerializer(serializers.ModelSerializer):
             "type",
         ]
         read_only_fields = fields
+
+
+class CustomerProfileListSerializer(serializers.ModelSerializer):
+    """Serializer for listing customer profile data."""
+
+    user = serializers.IntegerField(source="id", read_only=True)
+    uploaded_at = serializers.SerializerMethodField()
+
+    class Meta:
+        """Configure fields returned for customer profile lists."""
+
+        model = User
+        fields = [
+            "user",
+            "username",
+            "first_name",
+            "last_name",
+            "file",
+            "uploaded_at",
+            "type",
+        ]
+        read_only_fields = fields
+
+    def get_uploaded_at(self, obj):
+        """Return the upload timestamp of the related profile file."""
+        return obj.file.uploaded_at if obj.file else None
