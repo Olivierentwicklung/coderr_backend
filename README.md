@@ -256,9 +256,9 @@ as reviewer
 CustomUser 1 ─── many Review
 as reviewed business_user
 
-FileUpload 1 ─── 1 CustomUser
+FileUpload 1 ─── M CustomUser
 
-FileUpload 1 ─── 1 Offer
+FileUpload 1 ─── M Offer
 ```
 
 ---
