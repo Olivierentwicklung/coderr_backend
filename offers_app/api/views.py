@@ -1,13 +1,19 @@
-from django.db.models import Min
+from django.db.models import Min, Prefetch
+from django.http import Http404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, generics
+from rest_framework import filters, generics, permissions, status
 from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
 
 from offers_app.api.filters import OfferFilter
 from offers_app.api.pagination import OfferPagination
 from offers_app.api.permissions import IsBusinessUserOrReadOnly
-from offers_app.api.serializers import OfferCreateSerializer, OfferListSerializer
-from offers_app.models import Offer
+from offers_app.api.serializers import (
+    OfferCreateSerializer,
+    OfferListSerializer,
+    OfferRetrieveSerializer,
+)
+from offers_app.models import Offer, OfferDetail
 
 
 class OfferListCreateView(generics.ListCreateAPIView):
@@ -67,3 +73,31 @@ class OfferListCreateView(generics.ListCreateAPIView):
             return queryset.order_by("-annotated_min_price")
 
         raise ValidationError({"ordering": "Invalid ordering field."})
+
+
+class OfferRetrieveView(generics.RetrieveAPIView):
+    """API view for retrieving a single offer."""
+
+    serializer_class = OfferRetrieveSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):  # type:ignore
+        """Return optimized queryset for retrieving offers."""
+        return Offer.objects.prefetch_related(
+            Prefetch(
+                "details",
+                queryset=OfferDetail.objects.prefetch_related("features"),
+            )
+        )
+
+    def retrieve(self, request, *args, **kwargs):
+        """Return a single offer or a 500 response for unexpected errors."""
+        try:
+            return super().retrieve(request, *args, **kwargs)
+        except Http404:
+            raise
+        except Exception:
+            return Response(
+                {"detail": "Internal server error."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )

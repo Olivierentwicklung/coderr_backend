@@ -5,7 +5,7 @@ from django.db.utils import OperationalError
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-from offers_app.models import Offer, OfferDetail
+from offers_app.models import Offer, OfferDetail, OfferDetailFeature
 
 User = get_user_model()
 
@@ -193,39 +193,60 @@ def offers_list_url():
 
 
 @pytest.fixture
-def offer(business_user):
-    """Create an offer with multiple details."""
+def offer(business_user, offer_detail_features):
+    """Create an offer with multiple details and features."""
+
     offer = Offer.objects.create(
         business_user=business_user,
         title="Website Design",
         description="Professionelles Website-Design",
     )
 
-    OfferDetail.objects.create(
+    basic = OfferDetail.objects.create(
         offer=offer,
-        title="Basic",
-        revisions=1,
-        delivery_time_in_days=7,
+        title="Basic Design",
+        revisions=2,
+        delivery_time_in_days=5,
         price=100,
         offer_type="basic",
     )
 
-    OfferDetail.objects.create(
+    standard = OfferDetail.objects.create(
         offer=offer,
-        title="Standard",
-        revisions=3,
-        delivery_time_in_days=10,
+        title="Standard Design",
+        revisions=5,
+        delivery_time_in_days=7,
         price=200,
         offer_type="standard",
     )
 
-    OfferDetail.objects.create(
+    premium = OfferDetail.objects.create(
         offer=offer,
-        title="Premium",
-        revisions=5,
-        delivery_time_in_days=14,
-        price=300,
+        title="Premium Design",
+        revisions=10,
+        delivery_time_in_days=10,
+        price=500,
         offer_type="premium",
+    )
+
+    offer_detail_features(
+        basic,
+        ["Logo Design", "Visitenkarte"],
+    )
+
+    offer_detail_features(
+        standard,
+        ["Logo Design", "Visitenkarte", "Briefpapier"],
+    )
+
+    offer_detail_features(
+        premium,
+        [
+            "Logo Design",
+            "Visitenkarte",
+            "Briefpapier",
+            "Flyer",
+        ],
     )
 
     return offer
@@ -286,3 +307,25 @@ def offer_create_payload():
             },
         ],
     }
+
+
+@pytest.fixture
+def offer_detail_url(offer):
+    """Return the retrieve URL for an offer."""
+    return reverse("offer-detail", kwargs={"pk": offer.pk})
+
+
+@pytest.fixture
+def offer_detail_features():
+    """Create features for all offer details."""
+
+    def _create(offer_detail, features):
+        return [
+            OfferDetailFeature.objects.create(
+                offer_detail=offer_detail,
+                description=feature,
+            )
+            for feature in features
+        ]
+
+    return _create
