@@ -13,8 +13,12 @@ class IsAuthenticatedCustomerOrReadOnly(BasePermission):
 
 
 class IsReviewOwner(BasePermission):
-    """Allow only the review creator to update a review."""
+    """Allow only the creator of a review to modify or delete it."""
+
+    def has_permission(self, request, view):  # type:ignore
+        """Require authentication before object-level permission checks."""
+        return bool(request.user and request.user.is_authenticated)
 
     def has_object_permission(self, request, view, obj):
-        """Return whether the current user owns the review."""
+        """Return whether the authenticated user owns the review."""
         return obj.reviewer == request.user

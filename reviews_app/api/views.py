@@ -47,8 +47,8 @@ class ReviewListCreateView(generics.ListCreateAPIView):
         serializer.save(reviewer=self.request.user)
 
 
-class ReviewDetailView(generics.UpdateAPIView):
-    """Allow review owners to partially update their own reviews."""
+class ReviewDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """Retrieve, update, and delete review instances."""
 
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
@@ -63,3 +63,7 @@ class ReviewDetailView(generics.UpdateAPIView):
                 {"detail": "Internal server error."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+    def delete(self, request, *args, **kwargs):
+        """Delete a review when the authenticated user is the owner."""
+        return self.destroy(request, *args, **kwargs)
