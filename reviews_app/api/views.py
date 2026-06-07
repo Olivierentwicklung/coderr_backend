@@ -1,20 +1,20 @@
 from django.db import OperationalError
 from rest_framework import generics, status
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from reviews_app.api.permissions import IsAuthenticatedCustomerOrReadOnly
 from reviews_app.api.serializers import ReviewSerializer
 from reviews_app.models import Review
 
 
-class ReviewListView(generics.ListAPIView):
-    """List reviews for authenticated users with filtering and ordering support."""
+class ReviewListCreateView(generics.ListCreateAPIView):
+    """List reviews and allow authenticated customers to create reviews."""
 
     serializer_class = ReviewSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedCustomerOrReadOnly]
 
     def get_queryset(self):  # type:ignore
-        """Return reviews filtered by business user, reviewer, and allowed ordering."""
+        """Return reviews filtered by business user, reviewer, and ordering."""
         queryset = Review.objects.all()
 
         business_user_id = self.request.query_params.get("business_user_id")  # type:ignore
@@ -33,9 +33,19 @@ class ReviewListView(generics.ListAPIView):
         return queryset
 
     def list(self, request, *args, **kwargs):
-        """Return reviews or a 500 response when an unexpected database error occurs."""
+        """Return reviews or 500 if an unexpected database error occurs."""
         try:
             return super().list(request, *args, **kwargs)
+        except OperationalError:
+            return Response(
+                {"detail": "Internal server error."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    def create(self, request, *args, **kwargs):
+        """Create a review or return 500 for unexpected database errors."""
+        try:
+            return super().create(request, *args, **kwargs)
         except OperationalError:
             return Response(
                 {"detail": "Internal server error."},
