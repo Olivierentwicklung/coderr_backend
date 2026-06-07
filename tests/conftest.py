@@ -7,6 +7,7 @@ from rest_framework.test import APIClient
 
 from offers_app.models import Offer, OfferDetail, OfferDetailFeature
 from orders_app.models import Order
+from reviews_app.models import Review
 
 User = get_user_model()
 
@@ -440,4 +441,32 @@ def completed_order_count_url(business_user):
     return reverse(
         "completed-order-count",
         kwargs={"business_user_id": business_user.pk},
+    )
+
+
+@pytest.fixture
+def reviews_list_url():
+    """Return the reviews list endpoint URL."""
+    return reverse("review-list")
+
+
+@pytest.fixture
+def review(customer_user, business_user):
+    """Create and return a review."""
+    return Review.objects.create(
+        business_user=business_user,
+        reviewer=customer_user,
+        rating=4,
+        description="Sehr professioneller Service.",
+    )
+
+
+@pytest.fixture
+def second_review(second_customer_user, second_business_user):
+    """Create and return a second review."""
+    return Review.objects.create(
+        business_user=second_business_user,
+        reviewer=second_customer_user,
+        rating=5,
+        description="Top Qualität und schnelle Lieferung!",
     )
