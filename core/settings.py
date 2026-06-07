@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "rest_framework.authtoken",
+    "django_filters",
     "users_auth_app.apps.UsersAuthAppConfig",
     "uploads_app.apps.UploadsAppConfig",
     "reviews_app.apps.ReviewsAppConfig",
@@ -153,6 +154,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
     ],
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
 }
 
 
