@@ -2,7 +2,7 @@ import pytest
 from rest_framework import status
 from rest_framework.test import APIRequestFactory
 
-from offers_app.api.views import OfferListView
+from offers_app.api.views import OfferListCreateView
 
 
 @pytest.mark.django_db
@@ -218,7 +218,7 @@ def test_offer_list_query_count(
     factory = APIRequestFactory()
     request = factory.get(offers_list_url)
 
-    view = OfferListView.as_view()
+    view = OfferListCreateView.as_view()
 
     with django_assert_num_queries(3):
         response = view(request)
