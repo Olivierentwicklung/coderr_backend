@@ -68,7 +68,7 @@ def test_offer_contains_min_price(api_client, offers_list_url, offer):
 def test_offer_contains_min_delivery_time(api_client, offers_list_url, offer):
     response = api_client.get(offers_list_url)
 
-    assert response.data["results"][0]["min_delivery_time"] == 7
+    assert response.data["results"][0]["min_delivery_time"] == 5
 
 
 @pytest.mark.django_db

@@ -161,3 +161,49 @@ class OfferCreateSerializer(serializers.ModelSerializer):
             )
 
         return offer
+
+
+class OfferDetailSerializer(serializers.ModelSerializer):
+    """Serializer for returning offer detail data with feature strings."""
+
+    features = serializers.SerializerMethodField()
+
+    class Meta:
+        """Meta configuration for offer detail serializer."""
+
+        model = OfferDetail
+        fields = [
+            "id",
+            "title",
+            "revisions",
+            "delivery_time_in_days",
+            "price",
+            "features",
+            "offer_type",
+        ]
+
+    def get_features(self, obj):
+        """Return all feature descriptions as a list of strings."""
+        return list(obj.features.values_list("description", flat=True))
+
+
+class OfferRetrieveSerializer(serializers.ModelSerializer):
+    """Serializer for retrieving a single offer with all details."""
+
+    user = serializers.IntegerField(source="business_user.id", read_only=True)
+    details = OfferDetailSerializer(many=True, read_only=True)
+
+    class Meta:
+        """Meta configuration for offer retrieve serializer."""
+
+        model = Offer
+        fields = [
+            "id",
+            "user",
+            "title",
+            "image",
+            "description",
+            "created_at",
+            "updated_at",
+            "details",
+        ]
