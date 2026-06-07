@@ -32,6 +32,20 @@ def test_authenticated_user_can_list_reviews(
 
 
 @pytest.mark.django_db
+def test_business_user_can_list_reviews(
+    authenticated_business,
+    reviews_list_url,
+    review,
+):
+    """Verify authenticated business users can read reviews."""
+    # Arrange / Act
+    response = authenticated_business.get(reviews_list_url)
+
+    # Assert
+    assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.django_db
 def test_reviews_list_contains_expected_review_values(
     authenticated_customer,
     reviews_list_url,

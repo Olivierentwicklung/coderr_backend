@@ -4,7 +4,7 @@ from reviews_app.models import Review
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    """Serialize review data for list and create endpoints."""
+    """Serialize review data."""
 
     reviewer = serializers.PrimaryKeyRelatedField(read_only=True)
 
@@ -21,27 +21,38 @@ class ReviewSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["id", "reviewer", "created_at", "updated_at"]
+        read_only_fields = [
+            "id",
+            "reviewer",
+            "created_at",
+            "updated_at",
+        ]
 
     def validate(self, attrs):
-        """Validate that a customer can review a business user only once."""
+        """Validate review creation rules."""
         request = self.context["request"]
-        user = request.user
-        business_user = attrs.get("business_user")
 
-        if business_user.type != "business":
-            raise serializers.ValidationError(
-                {"business_user": "Selected user must be a business user."}
-            )
+        if request.method == "POST":
+            business_user = attrs["business_user"]
 
-        if Review.objects.filter(reviewer=user, business_user=business_user).exists():
-            raise serializers.ValidationError(
-                {"detail": "You have already reviewed this business user."}
-            )
+            if business_user.type != "business":
+                raise serializers.ValidationError(
+                    {"business_user": "Selected user must be a business user."}
+                )
+
+            if Review.objects.filter(
+                reviewer=request.user,
+                business_user=business_user,
+            ).exists():
+                raise serializers.ValidationError(
+                    {"detail": "You have already reviewed this business user."}
+                )
 
         return attrs
 
-    def create(self, validated_data):
-        """Create a review with the authenticated user as reviewer."""
-        request = self.context["request"]
-        return Review.objects.create(reviewer=request.user, **validated_data)
+    def update(self, instance, validated_data):
+        """Update only editable review fields."""
+        instance.rating = validated_data.get("rating", instance.rating)
+        instance.description = validated_data.get("description", instance.description)
+        instance.save(update_fields=["rating", "description", "updated_at"])
+        return instance
