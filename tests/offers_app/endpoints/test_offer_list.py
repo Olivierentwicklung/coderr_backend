@@ -211,11 +211,12 @@ def test_invalid_ordering_parameter_returns_400(api_client, offers_list_url):
 @pytest.mark.django_db
 def test_offer_list_query_count(
     django_assert_num_queries,
+    offers_list_url,
     offer,
     second_offer,
 ):
     factory = APIRequestFactory()
-    request = factory.get("/api/offers/")
+    request = factory.get(offers_list_url)
 
     view = OfferListView.as_view()
 
