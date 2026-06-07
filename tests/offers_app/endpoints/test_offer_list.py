@@ -173,6 +173,42 @@ def test_invalid_query_parameters_return_400(api_client, offers_list_url, params
 
 
 @pytest.mark.django_db
+def test_ordering_by_updated_at_descending(
+    api_client, offers_list_url, offer, second_offer
+):
+    response = api_client.get(offers_list_url, {"ordering": "-updated_at"})
+
+    assert response.status_code == status.HTTP_200_OK
+
+    updated_values = [item["updated_at"] for item in response.data["results"]]
+
+    assert updated_values == sorted(updated_values, reverse=True)
+
+
+@pytest.mark.django_db
+def test_ordering_by_min_price_descending(
+    api_client, offers_list_url, offer, second_offer
+):
+    response = api_client.get(offers_list_url, {"ordering": "-min_price"})
+
+    assert response.status_code == status.HTTP_200_OK
+
+    prices = [item["min_price"] for item in response.data["results"]]
+
+    assert prices == sorted(prices, reverse=True)
+
+
+@pytest.mark.django_db
+def test_invalid_ordering_parameter_returns_400(api_client, offers_list_url):
+    response = api_client.get(
+        offers_list_url,
+        {"ordering": "invalid_field"},
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+
+@pytest.mark.django_db
 def test_offer_list_query_count(
     django_assert_num_queries,
     offer,
