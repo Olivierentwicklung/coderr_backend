@@ -426,3 +426,9 @@ def authenticated_staff(api_client, staff_user):
     """Return an authenticated API client as staff user."""
     api_client.force_authenticate(user=staff_user)
     return api_client
+
+
+@pytest.fixture
+def order_count_url(business_user):
+    """Return the order count endpoint URL for a business user."""
+    return reverse("order-count", kwargs={"business_user_id": business_user.pk})
