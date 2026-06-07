@@ -350,6 +350,23 @@ def offer_patch_payload():
 
 
 @pytest.fixture
+def offer_patch_payload_not_offer_type():
+    """Return valid partial update payload for an offer."""
+    return {
+        "title": "Updated Grafikdesign-Paket",
+        "details": [
+            {
+                "title": "Basic Design Updated",
+                "revisions": 3,
+                "delivery_time_in_days": 6,
+                "price": 120,
+                "features": ["Logo Design", "Flyer"],
+            }
+        ],
+    }
+
+
+@pytest.fixture
 def offer_detail(offer):
     """Return the basic offer detail from the offer fixture."""
     return offer.details.get(offer_type="basic")

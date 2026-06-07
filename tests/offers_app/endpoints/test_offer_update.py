@@ -306,6 +306,52 @@ def test_update_offer_returns_400_when_valid_offer_type_is_not_on_offer(
 
 
 @pytest.mark.django_db
+def test_update_offer_returns_400_for_duplicate_offer_types(
+    authenticated_business,
+    offer_detail_url,
+):
+    """Each offer_type may only be submitted once."""
+    payload = {
+        "details": [
+            {
+                "offer_type": "basic",
+                "title": "Basic Design Updated",
+            },
+            {
+                "offer_type": "basic",
+                "title": "Another Basic Update",
+            },
+        ]
+    }
+
+    response = authenticated_business.patch(
+        offer_detail_url,
+        payload,
+        format="json",
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert "details" in response.data
+
+
+@pytest.mark.django_db
+def test_update_offer_returns_400_when_offer_type_is_empty(
+    authenticated_business,
+    offer_detail_url,
+    offer_patch_payload_not_offer_type,
+):
+
+    response = authenticated_business.patch(
+        offer_detail_url,
+        offer_patch_payload_not_offer_type,
+        format="json",
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert "details" in response.data
+
+
+@pytest.mark.django_db
 @pytest.mark.performance_regression
 def test_update_offer_query_count(
     django_assert_num_queries,

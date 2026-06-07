@@ -161,8 +161,6 @@ class OfferDetailRetrieveView(generics.RetrieveAPIView):
             return super().retrieve(request, *args, **kwargs)
         except Http404:
             raise
-        except APIException:
-            raise
         except Exception:
             return Response(
                 {"detail": "Internal server error."},
