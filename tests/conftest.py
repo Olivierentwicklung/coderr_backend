@@ -347,3 +347,15 @@ def offer_patch_payload():
             }
         ],
     }
+
+
+@pytest.fixture
+def offer_detail(offer):
+    """Return the basic offer detail from the offer fixture."""
+    return offer.details.get(offer_type="basic")
+
+
+@pytest.fixture
+def offer_detail_retrieve_url(offer_detail):
+    """Return the retrieve URL for an offer detail."""
+    return reverse("offerdetail-detail", kwargs={"pk": offer_detail.pk})

@@ -1,6 +1,10 @@
 from django.urls import path
 
-from offers_app.api.views import OfferListCreateView, OfferRetrieveUpdateDestroyView
+from offers_app.api.views import (
+    OfferDetailRetrieveView,
+    OfferListCreateView,
+    OfferRetrieveUpdateDestroyView,
+)
 
 urlpatterns = [
     path("offers/", OfferListCreateView.as_view(), name="offer-list"),
@@ -8,5 +12,10 @@ urlpatterns = [
         "offers/<int:pk>/",
         OfferRetrieveUpdateDestroyView.as_view(),
         name="offer-detail",
+    ),
+    path(
+        "offerdetails/<int:pk>/",
+        OfferDetailRetrieveView.as_view(),
+        name="offerdetail-detail",
     ),
 ]
