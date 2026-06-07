@@ -27,8 +27,8 @@ class OfferListCreateView(generics.ListCreateAPIView):
         return OfferListSerializer
 
     def get_queryset(self):  # type:ignore
-        """Return optimized offer queryset with price and delivery annotations."""
-        return (
+        """Return optimized, ordered offer queryset."""
+        queryset = (
             Offer.objects.select_related("business_user")
             .prefetch_related("details")
             .annotate(
@@ -37,14 +37,7 @@ class OfferListCreateView(generics.ListCreateAPIView):
             )
         )
 
-    def filter_queryset(self, queryset):
-        """Apply filtering, search, and custom ordering to the queryset."""
-        queryset = super().filter_queryset(queryset)
-
-        if self.request.method == "GET":
-            return self._apply_ordering(queryset, self.request.query_params)  # type:ignore
-
-        return queryset
+        return self._apply_ordering(queryset, self.request.query_params)  # type:ignore
 
     def list(self, request, *args, **kwargs):
         """Return paginated offers or a 500 response for unexpected errors."""
