@@ -5,6 +5,8 @@ from django.db.utils import OperationalError
 from django.urls import reverse
 from rest_framework.test import APIClient
 
+from offers_app.models import Offer, OfferDetail
+
 User = get_user_model()
 
 
@@ -182,3 +184,69 @@ def business_profiles_url():
 def customer_profiles_url():
     """Return customer profiles list endpoint URL."""
     return reverse("customer-profiles")
+
+
+@pytest.fixture
+def offers_list_url():
+    """Return the offers list endpoint URL."""
+    return reverse("offer-list")
+
+
+@pytest.fixture
+def offer(business_user):
+    """Create an offer with multiple details."""
+    offer = Offer.objects.create(
+        business_user=business_user,
+        title="Website Design",
+        description="Professionelles Website-Design",
+    )
+
+    OfferDetail.objects.create(
+        offer=offer,
+        title="Basic",
+        revisions=1,
+        delivery_time_in_days=7,
+        price=100,
+        offer_type="basic",
+    )
+
+    OfferDetail.objects.create(
+        offer=offer,
+        title="Standard",
+        revisions=3,
+        delivery_time_in_days=10,
+        price=200,
+        offer_type="standard",
+    )
+
+    OfferDetail.objects.create(
+        offer=offer,
+        title="Premium",
+        revisions=5,
+        delivery_time_in_days=14,
+        price=300,
+        offer_type="premium",
+    )
+
+    return offer
+
+
+@pytest.fixture
+def second_offer(second_business_user):
+    """Create a second offer."""
+    offer = Offer.objects.create(
+        business_user=second_business_user,
+        title="Logo Design",
+        description="Modern branding package",
+    )
+
+    OfferDetail.objects.create(
+        offer=offer,
+        title="Basic",
+        revisions=1,
+        delivery_time_in_days=3,
+        price=50,
+        offer_type="basic",
+    )
+
+    return offer
