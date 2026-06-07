@@ -76,14 +76,14 @@ class OfferListCreateView(generics.ListCreateAPIView):
         raise ValidationError({"ordering": "Invalid ordering field."})
 
 
-class OfferRetrieveUpdateView(generics.RetrieveUpdateAPIView):
-    """API view for retrieving and partially updating a single offer."""
+class OfferRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    """API view for retrieving, updating, and deleting a single offer."""
 
     permission_classes = [
         permissions.IsAuthenticated,
         IsOfferOwnerOrReadOnly,
     ]
-    http_method_names = ["get", "patch", "head", "options"]
+    http_method_names = ["get", "patch", "delete", "head", "options"]
 
     def get_serializer_class(self):  # type:ignore
         """Return serializer class depending on request method."""
@@ -119,6 +119,20 @@ class OfferRetrieveUpdateView(generics.RetrieveUpdateAPIView):
         """Partially update an offer."""
         try:
             return super().partial_update(request, *args, **kwargs)
+        except Http404:
+            raise
+        except APIException:
+            raise
+        except Exception:
+            return Response(
+                {"detail": "Internal server error."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    def destroy(self, request, *args, **kwargs):
+        """Delete an offer or return 500 for unexpected errors."""
+        try:
+            return super().destroy(request, *args, **kwargs)
         except Http404:
             raise
         except APIException:
