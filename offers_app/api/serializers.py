@@ -207,3 +207,122 @@ class OfferRetrieveSerializer(serializers.ModelSerializer):
             "updated_at",
             "details",
         ]
+
+
+class OfferDetailUpdateSerializer(serializers.Serializer):
+    """Serializer for partially updating a single offer detail."""
+
+    title = serializers.CharField(required=False)
+    revisions = serializers.IntegerField(required=False, min_value=0)
+    delivery_time_in_days = serializers.IntegerField(required=False, min_value=1)
+    price = serializers.IntegerField(required=False, min_value=0)
+    features = serializers.ListField(
+        child=serializers.CharField(),
+        required=False,
+        allow_empty=False,
+    )
+    offer_type = serializers.ChoiceField(
+        choices=OfferDetail.OFFER_TYPE_CHOICES,
+        required=True,
+    )
+
+
+class OfferUpdateSerializer(serializers.ModelSerializer):
+    """Serializer for partially updating offers and nested details."""
+
+    details = OfferDetailUpdateSerializer(many=True, required=False)
+
+    class Meta:
+        """Meta configuration for offer update serializer."""
+
+        model = Offer
+        fields = [
+            "title",
+            "image",
+            "description",
+            "details",
+        ]
+
+    def validate_details(self, value):
+        """Validate submitted detail updates."""
+        offer_types = []
+
+        for index, detail in enumerate(value):
+            offer_type = detail.get("offer_type")
+
+            if not offer_type:
+                raise serializers.ValidationError(
+                    {index: {"offer_type": "This field is required."}}
+                )
+
+            offer_types.append(offer_type)
+
+        if len(offer_types) != len(set(offer_types)):
+            raise serializers.ValidationError(
+                "Each offer_type may only be provided once."
+            )
+
+        return value
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        """Update an offer and only the submitted nested details."""
+        details_data = validated_data.pop("details", None)
+
+        for field, value in validated_data.items():
+            setattr(instance, field, value)
+
+        instance.save()
+
+        if details_data is not None:
+            self._update_details(instance, details_data)
+
+        return instance
+
+    def _update_details(self, offer, details_data):
+        """Update matching offer details by offer_type."""
+        existing_details = {
+            detail.offer_type: detail
+            for detail in offer.details.prefetch_related("features")
+        }
+
+        for index, detail_data in enumerate(details_data):
+            offer_type = detail_data.pop("offer_type", None)
+
+            if not offer_type:
+                raise serializers.ValidationError(
+                    {"details": {index: {"offer_type": "This field is required."}}}
+                )
+
+            detail = existing_details.get(offer_type)
+
+            if detail is None:
+                raise serializers.ValidationError(
+                    {"details": {index: {"offer_type": "Invalid offer_type."}}}
+                )
+
+            features = detail_data.pop("features", None)
+
+            for field, value in detail_data.items():
+                setattr(detail, field, value)
+
+            detail.save()
+
+            if features is not None:
+                detail.features.all().delete()
+                OfferDetailFeature.objects.bulk_create(
+                    [
+                        OfferDetailFeature(
+                            offer_detail=detail,
+                            description=feature,
+                        )
+                        for feature in features
+                    ]
+                )
+
+    def to_representation(self, instance):  # type:ignore
+        """Return the updated offer using the retrieve response format."""
+        return OfferRetrieveSerializer(
+            instance,
+            context=self.context,
+        ).data

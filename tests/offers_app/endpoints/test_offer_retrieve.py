@@ -3,7 +3,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
 
-from offers_app.api.views import OfferRetrieveView
+from offers_app.api.views import OfferRetrieveUpdateView
 
 
 @pytest.mark.django_db
@@ -142,9 +142,9 @@ def test_retrieve_offer_query_count(
     request = factory.get(f"/api/offers/{offer.pk}/")
     force_authenticate(request, user=business_user)
 
-    view = OfferRetrieveView.as_view()
+    view = OfferRetrieveUpdateView.as_view()
 
-    with django_assert_num_queries(7):
+    with django_assert_num_queries(6):
         response = view(request, pk=offer.pk)
 
     assert response.status_code == status.HTTP_200_OK
