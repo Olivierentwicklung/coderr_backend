@@ -495,3 +495,9 @@ def valid_review_patch_payload():
         "rating": 5,
         "description": "Noch besser als erwartet!",
     }
+
+
+@pytest.fixture
+def base_info_url():
+    """Return the base info endpoint URL."""
+    return reverse("base-info")
