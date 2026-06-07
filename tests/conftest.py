@@ -407,3 +407,22 @@ def unrelated_order(second_customer_user, second_business_user, second_offer):
 def order_detail_url(customer_order):
     """Return the order detail endpoint URL."""
     return reverse("order-detail", kwargs={"pk": customer_order.pk})
+
+
+@pytest.fixture
+def staff_user():
+    """Create and return a staff admin user."""
+    return User.objects.create_user(  # type:ignore
+        username="staff_user",
+        email="staff@test.com",
+        password="testpassword123",
+        type="business",
+        is_staff=True,
+    )
+
+
+@pytest.fixture
+def authenticated_staff(api_client, staff_user):
+    """Return an authenticated API client as staff user."""
+    api_client.force_authenticate(user=staff_user)
+    return api_client
