@@ -6,13 +6,14 @@ from rest_framework.response import Response
 
 from offers_app.models import OfferDetail
 from orders_app.api.permissions import IsCustomerUser
-from orders_app.api.serializers import OrderCreateSerializer, OrderSerializer
+from orders_app.api.serializers import OrderSerializer
 from orders_app.models import Order
 
 
 class OrderListCreateView(generics.ListCreateAPIView):
     """List related orders or create a new order from an offer detail."""
 
+    serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):  # type:ignore
@@ -34,13 +35,6 @@ class OrderListCreateView(generics.ListCreateAPIView):
             return [IsAuthenticated(), IsCustomerUser()]
 
         return [IsAuthenticated()]
-
-    def get_serializer_class(self):  # type:ignore
-        """Return the serializer class for the current request method."""
-        if self.request.method == "POST":
-            return OrderCreateSerializer
-
-        return OrderSerializer
 
     def create(self, request, *args, **kwargs):
         """Create an order and return the full order representation."""
