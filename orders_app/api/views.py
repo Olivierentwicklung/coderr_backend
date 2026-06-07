@@ -2,7 +2,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 
 from offers_app.models import OfferDetail
@@ -63,8 +63,8 @@ class OrderListCreateView(generics.ListCreateAPIView):
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 
 
-class OrderDetailView(generics.UpdateAPIView):
-    """Update the status of a single order."""
+class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """Update or delete a single order."""
 
     queryset = (
         Order.objects.select_related(
@@ -77,14 +77,23 @@ class OrderDetailView(generics.UpdateAPIView):
         .order_by("id")
     )
     serializer_class = OrderStatusUpdateSerializer
-    permission_classes = [IsAuthenticated, IsBusinessUser]
-    http_method_names = ["patch"]
+    http_method_names = ["patch", "delete"]
+
+    def get_permissions(self):
+        """Return method-specific permissions for order detail actions."""
+        if self.request.method == "PATCH":
+            return [IsAuthenticated(), IsBusinessUser()]
+
+        if self.request.method == "DELETE":
+            return [IsAuthenticated(), IsAdminUser()]
+
+        return [IsAuthenticated()]
 
     def get_object(self):
-        """Return the order and ensure the business user owns it."""
+        """Return the order and enforce business ownership for PATCH requests."""
         order = super().get_object()
 
-        if order.business_user != self.request.user:
+        if self.request.method == "PATCH" and order.business_user != self.request.user:
             raise PermissionDenied("You do not have permission to update this order.")
 
         return order
@@ -103,3 +112,10 @@ class OrderDetailView(generics.UpdateAPIView):
 
         response_serializer = OrderSerializer(order)
         return Response(response_serializer.data, status=status.HTTP_200_OK)
+
+    def destroy(self, request, *args, **kwargs):
+        """Delete an order and return no response body."""
+        order = self.get_object()
+        order.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
