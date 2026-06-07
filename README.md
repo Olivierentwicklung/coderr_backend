@@ -141,6 +141,14 @@ Authorization: Token <your_token>
 
 ---
 
+## Base-info Endpoints
+
+| Method | Endpoint          | Description           |
+| ------ | ----------------- | --------------------- |
+| GET    | `/api/base-info/` | List base information |
+
+---
+
 ## 🧾 Example Requests
 
 ### Register User
@@ -178,6 +186,10 @@ coderr_backend/
 │   ├── asgi.py
 │   └── wsgi.py
 │
+├── base_info_app/
+│   ├── views.py
+│   └── urls.py
+│
 ├── users_auth_app/
 │   ├── models.py
 │   ├── serializers.py
@@ -209,6 +221,7 @@ coderr_backend/
 │   └── urls.py
 │
 ├── tests/
+│   ├── base_info_app/
 │   ├── users_auth_app/
 │   ├── uploads_app/
 │   ├── offers_app/
