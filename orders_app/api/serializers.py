@@ -40,3 +40,24 @@ class OrderSerializer(serializers.ModelSerializer):
     def get_features(self, obj):
         """Return all feature descriptions from the related offer detail."""
         return [feature.description for feature in obj.offer_detail.features.all()]
+
+
+class OrderStatusUpdateSerializer(serializers.ModelSerializer):
+    """Validate status-only updates for orders."""
+
+    class Meta:
+        """Define writable fields for order status updates."""
+
+        model = Order
+        fields = ["status"]
+
+    def validate(self, attrs):
+        """Reject PATCH requests containing fields other than status."""
+        invalid_fields = set(self.initial_data.keys()) - {"status"}  # type:ignore
+
+        if invalid_fields:
+            raise serializers.ValidationError(
+                {field: ["This field is not allowed."] for field in invalid_fields}
+            )
+
+        return attrs

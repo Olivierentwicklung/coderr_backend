@@ -401,3 +401,9 @@ def unrelated_order(second_customer_user, second_business_user, second_offer):
         offer_detail=offer_detail,
         status="created",
     )
+
+
+@pytest.fixture
+def order_detail_url(customer_order):
+    """Return the order detail endpoint URL."""
+    return reverse("order-detail", kwargs={"pk": customer_order.pk})
