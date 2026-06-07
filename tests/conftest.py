@@ -470,3 +470,13 @@ def second_review(second_customer_user, second_business_user):
         rating=5,
         description="Top Qualität und schnelle Lieferung!",
     )
+
+
+@pytest.fixture
+def valid_review_create_payload(business_user):
+    """Return valid review creation payload."""
+    return {
+        "business_user": business_user.pk,
+        "rating": 4,
+        "description": "Alles war toll!",
+    }
