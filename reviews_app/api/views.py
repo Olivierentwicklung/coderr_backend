@@ -2,7 +2,7 @@ from django.db import OperationalError
 from rest_framework import generics, status
 from rest_framework.response import Response
 
-from reviews_app.api.permissions import IsAuthenticatedCustomerOrReadOnly
+from reviews_app.api.permissions import IsAuthenticatedCustomerOrReadOnly, IsReviewOwner
 from reviews_app.api.serializers import ReviewSerializer
 from reviews_app.models import Review
 
@@ -42,10 +42,22 @@ class ReviewListCreateView(generics.ListCreateAPIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
-    def create(self, request, *args, **kwargs):
-        """Create a review or return 500 for unexpected database errors."""
+    def perform_create(self, serializer):
+        """Save the authenticated user as the review creator."""
+        serializer.save(reviewer=self.request.user)
+
+
+class ReviewDetailView(generics.UpdateAPIView):
+    """Allow review owners to partially update their own reviews."""
+
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    permission_classes = [IsReviewOwner]
+
+    def patch(self, request, *args, **kwargs):
+        """Partially update rating and description for the review owner."""
         try:
-            return super().create(request, *args, **kwargs)
+            return self.partial_update(request, *args, **kwargs)
         except OperationalError:
             return Response(
                 {"detail": "Internal server error."},

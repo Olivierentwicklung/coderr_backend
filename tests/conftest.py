@@ -480,3 +480,18 @@ def valid_review_create_payload(business_user):
         "rating": 4,
         "description": "Alles war toll!",
     }
+
+
+@pytest.fixture
+def review_detail_url(review):
+    """Return the review detail endpoint URL."""
+    return reverse("review-detail", kwargs={"pk": review.pk})
+
+
+@pytest.fixture
+def valid_review_patch_payload():
+    """Return valid review patch payload."""
+    return {
+        "rating": 5,
+        "description": "Noch besser als erwartet!",
+    }
