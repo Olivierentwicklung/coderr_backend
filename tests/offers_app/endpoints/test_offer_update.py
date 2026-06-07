@@ -1,8 +1,9 @@
 import pytest
 from django.urls import reverse
-from rest_framework import status
+from rest_framework import serializers, status
 from rest_framework.test import APIRequestFactory, force_authenticate
 
+from offers_app.api.serializers import OfferUpdateSerializer
 from offers_app.api.views import OfferRetrieveUpdateDestroyView
 
 
@@ -303,6 +304,58 @@ def test_update_offer_returns_400_when_valid_offer_type_is_not_on_offer(
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert "details" in response.data
+
+
+@pytest.mark.django_db
+def test_update_offer_returns_400_for_duplicate_offer_types(
+    authenticated_business,
+    offer_detail_url,
+):
+    """Each offer_type may only be submitted once."""
+    payload = {
+        "details": [
+            {
+                "offer_type": "basic",
+                "title": "Basic Design Updated",
+            },
+            {
+                "offer_type": "basic",
+                "title": "Another Basic Update",
+            },
+        ]
+    }
+
+    response = authenticated_business.patch(
+        offer_detail_url,
+        payload,
+        format="json",
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert "details" in response.data
+
+
+@pytest.mark.django_db
+def test_update_details_raises_error_when_offer_type_missing(offer):
+    """_update_details raises ValidationError when offer_type is missing."""
+    serializer = OfferUpdateSerializer()
+
+    details_data = [
+        {
+            "title": "Basic Design Updated",
+            "revisions": 3,
+            "delivery_time_in_days": 6,
+            "price": 120,
+            "features": ["Logo Design", "Flyer"],
+        }
+    ]
+
+    with pytest.raises(serializers.ValidationError) as exc_info:
+        serializer._update_details(offer, details_data)  # type:ignore
+
+    assert exc_info.value.detail == {
+        "details": {0: {"offer_type": "This field is required."}}
+    }
 
 
 @pytest.mark.django_db

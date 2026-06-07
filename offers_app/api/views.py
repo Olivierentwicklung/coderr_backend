@@ -10,6 +10,7 @@ from offers_app.api.pagination import OfferPagination
 from offers_app.api.permissions import IsBusinessUserOrReadOnly, IsOfferOwnerOrReadOnly
 from offers_app.api.serializers import (
     OfferCreateSerializer,
+    OfferDetailSerializer,
     OfferListSerializer,
     OfferRetrieveSerializer,
     OfferUpdateSerializer,
@@ -136,6 +137,29 @@ class OfferRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         except Http404:
             raise
         except APIException:
+            raise
+        except Exception:
+            return Response(
+                {"detail": "Internal server error."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
+class OfferDetailRetrieveView(generics.RetrieveAPIView):
+    """API view for retrieving a single offer detail."""
+
+    serializer_class = OfferDetailSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):  # type:ignore
+        """Return optimized offer detail queryset with related features."""
+        return OfferDetail.objects.prefetch_related("features")
+
+    def retrieve(self, request, *args, **kwargs):
+        """Return an offer detail or a 500 response for unexpected errors."""
+        try:
+            return super().retrieve(request, *args, **kwargs)
+        except Http404:
             raise
         except Exception:
             return Response(
