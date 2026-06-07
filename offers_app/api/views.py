@@ -2,16 +2,17 @@ from django.db.models import Min, Prefetch
 from django.http import Http404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, generics, permissions, status
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import APIException, ValidationError
 from rest_framework.response import Response
 
 from offers_app.api.filters import OfferFilter
 from offers_app.api.pagination import OfferPagination
-from offers_app.api.permissions import IsBusinessUserOrReadOnly
+from offers_app.api.permissions import IsBusinessUserOrReadOnly, IsOfferOwnerOrReadOnly
 from offers_app.api.serializers import (
     OfferCreateSerializer,
     OfferListSerializer,
     OfferRetrieveSerializer,
+    OfferUpdateSerializer,
 )
 from offers_app.models import Offer, OfferDetail
 
@@ -75,18 +76,30 @@ class OfferListCreateView(generics.ListCreateAPIView):
         raise ValidationError({"ordering": "Invalid ordering field."})
 
 
-class OfferRetrieveView(generics.RetrieveAPIView):
-    """API view for retrieving a single offer."""
+class OfferRetrieveUpdateView(generics.RetrieveUpdateAPIView):
+    """API view for retrieving and partially updating a single offer."""
 
-    serializer_class = OfferRetrieveSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [
+        permissions.IsAuthenticated,
+        IsOfferOwnerOrReadOnly,
+    ]
+    http_method_names = ["get", "patch", "head", "options"]
+
+    def get_serializer_class(self):  # type:ignore
+        """Return serializer class depending on request method."""
+        if self.request.method == "PATCH":
+            return OfferUpdateSerializer
+
+        return OfferRetrieveSerializer
 
     def get_queryset(self):  # type:ignore
-        """Return optimized queryset for retrieving offers."""
-        return Offer.objects.prefetch_related(
+        """Return optimized queryset for retrieve and update operations."""
+        return Offer.objects.select_related("business_user").prefetch_related(
             Prefetch(
                 "details",
-                queryset=OfferDetail.objects.prefetch_related("features"),
+                queryset=OfferDetail.objects.prefetch_related("features").order_by(
+                    "id"
+                ),
             )
         )
 
@@ -95,6 +108,20 @@ class OfferRetrieveView(generics.RetrieveAPIView):
         try:
             return super().retrieve(request, *args, **kwargs)
         except Http404:
+            raise
+        except Exception:
+            return Response(
+                {"detail": "Internal server error."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    def partial_update(self, request, *args, **kwargs):
+        """Partially update an offer."""
+        try:
+            return super().partial_update(request, *args, **kwargs)
+        except Http404:
+            raise
+        except APIException:
             raise
         except Exception:
             return Response(

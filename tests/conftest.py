@@ -329,3 +329,21 @@ def offer_detail_features():
         ]
 
     return _create
+
+
+@pytest.fixture
+def offer_patch_payload():
+    """Return valid partial update payload for an offer."""
+    return {
+        "title": "Updated Grafikdesign-Paket",
+        "details": [
+            {
+                "title": "Basic Design Updated",
+                "revisions": 3,
+                "delivery_time_in_days": 6,
+                "price": 120,
+                "features": ["Logo Design", "Flyer"],
+                "offer_type": "basic",
+            }
+        ],
+    }
