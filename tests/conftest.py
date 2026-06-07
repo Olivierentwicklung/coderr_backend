@@ -432,3 +432,12 @@ def authenticated_staff(api_client, staff_user):
 def order_count_url(business_user):
     """Return the order count endpoint URL for a business user."""
     return reverse("order-count", kwargs={"business_user_id": business_user.pk})
+
+
+@pytest.fixture
+def completed_order_count_url(business_user):
+    """Return the completed order count endpoint URL."""
+    return reverse(
+        "completed-order-count",
+        kwargs={"business_user_id": business_user.pk},
+    )
