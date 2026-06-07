@@ -6,6 +6,7 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 
 from offers_app.models import Offer, OfferDetail, OfferDetailFeature
+from orders_app.models import Order
 
 User = get_user_model()
 
@@ -359,3 +360,44 @@ def offer_detail(offer):
 def offer_detail_retrieve_url(offer_detail):
     """Return the retrieve URL for an offer detail."""
     return reverse("offerdetail-detail", kwargs={"pk": offer_detail.pk})
+
+
+@pytest.fixture
+def orders_list_url():
+    """Return the orders list endpoint URL."""
+    return reverse("order-list")
+
+
+@pytest.fixture
+def customer_order(customer_user, business_user, offer_detail):
+    """Create an order where the authenticated customer is the customer user."""
+    return Order.objects.create(
+        customer_user=customer_user,
+        business_user=business_user,
+        offer_detail=offer_detail,
+        status="in_progress",
+    )
+
+
+@pytest.fixture
+def business_order(customer_user, business_user, offer_detail):
+    """Create an order where the authenticated business user is the business user."""
+    return Order.objects.create(
+        customer_user=customer_user,
+        business_user=business_user,
+        offer_detail=offer_detail,
+        status="in_progress",
+    )
+
+
+@pytest.fixture
+def unrelated_order(second_customer_user, second_business_user, second_offer):
+    """Create an order unrelated to the authenticated user."""
+    offer_detail = second_offer.details.get(offer_type="basic")
+
+    return Order.objects.create(
+        customer_user=second_customer_user,
+        business_user=second_business_user,
+        offer_detail=offer_detail,
+        status="created",
+    )
