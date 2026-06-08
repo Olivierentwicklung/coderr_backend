@@ -111,7 +111,6 @@ def test_retrieve_offer_detail_returns_404_for_unknown_detail(
 
 
 @pytest.mark.django_db
-@pytest.mark.performance_regression
 def test_retrieve_offer_detail_query_count(
     django_assert_num_queries,
     business_user,

@@ -2,7 +2,27 @@ import pytest
 from rest_framework import status
 from rest_framework.test import APIRequestFactory
 
+from offers_app.api.serializers import (
+    OfferListSerializer,
+)
 from offers_app.api.views import OfferListCreateView
+
+
+@pytest.mark.django_db
+def test_offer_list_serializer_uses_annotated_min_values(offer):
+    factory = APIRequestFactory()
+    request = factory.get("/api/offers/")
+
+    offer.annotated_min_price = 10
+    offer.annotated_min_delivery_time = 2
+
+    data = OfferListSerializer(
+        offer,
+        context={"request": request},
+    ).data
+
+    assert data["min_price"] == 10  # type:ignore
+    assert data["min_delivery_time"] == 2  # type:ignore
 
 
 @pytest.mark.django_db

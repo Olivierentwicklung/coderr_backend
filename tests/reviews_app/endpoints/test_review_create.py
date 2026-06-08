@@ -252,7 +252,6 @@ def test_review_create_returns_500_when_database_crashes(
 
 
 @pytest.mark.django_db
-@pytest.mark.performance_regression
 def test_review_create_query_count(
     django_assert_num_queries,
     customer_user,

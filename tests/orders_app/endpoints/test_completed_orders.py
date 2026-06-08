@@ -120,7 +120,6 @@ def test_completed_order_count_returns_500_on_unexpected_database_error(
 
 
 @pytest.mark.django_db
-@pytest.mark.performance_regression
 def test_completed_order_count_query_count(
     django_assert_num_queries,
     business_user,

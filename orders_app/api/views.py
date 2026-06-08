@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -51,6 +51,14 @@ class OrderListCreateView(generics.ListCreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        try:
+            offer_detail_id = int(offer_detail_id)
+        except (TypeError, ValueError):
+            return Response(
+                {"offer_detail_id": ["A valid integer is required."]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         offer_detail = get_object_or_404(
             OfferDetail.objects.select_related("offer").prefetch_related("features"),
             pk=offer_detail_id,
@@ -85,17 +93,16 @@ class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_permissions(self):
         """Return method-specific permissions for order detail actions."""
-        if self.request.method == "PATCH":
-            return [IsAuthenticated(), IsBusinessUser()]
-
         if self.request.method == "DELETE":
             return [IsAuthenticated(), IsAdminUser()]
 
-        return [IsAuthenticated()]
+        return [IsAuthenticated(), IsBusinessUser()]
 
     def get_object(self):
-        """Return the order and enforce business ownership for PATCH requests."""
-        order = super().get_object()
+        try:
+            order = self.get_queryset().get(pk=self.kwargs["pk"])
+        except Order.DoesNotExist:
+            raise NotFound("The specified order was not found.")
 
         if self.request.method == "PATCH" and order.business_user != self.request.user:
             raise PermissionDenied("You do not have permission to update this order.")

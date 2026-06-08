@@ -3,7 +3,24 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
 
-from offers_app.api.views import OfferRetrieveUpdateDestroyView
+from offers_app.api.views import OfferRetrieveSerializer, OfferRetrieveUpdateDestroyView
+
+
+@pytest.mark.django_db
+def test_offer_retrieve_serializer_uses_annotated_min_values(offer):
+    factory = APIRequestFactory()
+    request = factory.get(f"/api/offers/{offer.pk}/")
+
+    offer.annotated_min_price = 10
+    offer.annotated_min_delivery_time = 2
+
+    data = OfferRetrieveSerializer(
+        offer,
+        context={"request": request},
+    ).data
+
+    assert data["min_price"] == 10  # type:ignore
+    assert data["min_delivery_time"] == 2  # type:ignore
 
 
 @pytest.mark.django_db
@@ -33,22 +50,23 @@ def test_retrieve_offer_response_structure(
     authenticated_business,
     offer_detail_url,
 ):
-    """Retrieve response contains the expected offer fields."""
     response = authenticated_business.get(offer_detail_url)
 
     expected_fields = {
         "id",
-        "title",
         "user",
+        "title",
         "image",
         "description",
         "created_at",
         "updated_at",
         "details",
+        "min_price",
+        "min_delivery_time",
     }
 
     assert response.status_code == status.HTTP_200_OK
-    assert expected_fields.issubset(response.data.keys())
+    assert set(response.data.keys()) == expected_fields
 
 
 @pytest.mark.django_db
@@ -80,42 +98,16 @@ def test_retrieve_offer_contains_three_details(
 
 
 @pytest.mark.django_db
-def test_retrieve_offer_detail_structure(
+def test_retrieve_offer_details_contain_only_id_and_url(
     authenticated_business,
     offer_detail_url,
 ):
-    """Each returned offer detail contains the expected fields."""
     response = authenticated_business.get(offer_detail_url)
 
-    first_detail = response.data["details"][0]
-
-    expected_fields = {
-        "id",
-        "title",
-        "revisions",
-        "delivery_time_in_days",
-        "price",
-        "features",
-        "offer_type",
-    }
-
     assert response.status_code == status.HTTP_200_OK
-    assert expected_fields.issubset(first_detail.keys())
 
-
-@pytest.mark.django_db
-def test_retrieve_offer_contains_detail_features(
-    authenticated_business,
-    offer_detail_url,
-):
-    """Offer detail features are returned as a list of strings."""
-    response = authenticated_business.get(offer_detail_url)
-
-    first_detail = response.data["details"][0]
-
-    assert response.status_code == status.HTTP_200_OK
-    assert isinstance(first_detail["features"], list)
-    assert first_detail["features"]
+    for detail in response.data["details"]:
+        assert set(detail.keys()) == {"id", "url"}
 
 
 @pytest.mark.django_db
@@ -131,7 +123,6 @@ def test_retrieve_offer_returns_404_for_unknown_offer(
 
 
 @pytest.mark.django_db
-@pytest.mark.performance_regression
 def test_retrieve_offer_query_count(
     django_assert_num_queries,
     business_user,
@@ -144,7 +135,7 @@ def test_retrieve_offer_query_count(
 
     view = OfferRetrieveUpdateDestroyView.as_view()
 
-    with django_assert_num_queries(6):
+    with django_assert_num_queries(5):
         response = view(request, pk=offer.pk)
 
     assert response.status_code == status.HTTP_200_OK

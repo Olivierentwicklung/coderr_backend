@@ -5,6 +5,149 @@ from rest_framework.test import APIRequestFactory, force_authenticate
 
 from offers_app.api.serializers import OfferUpdateSerializer
 from offers_app.api.views import OfferRetrieveUpdateDestroyView
+from offers_app.models import OfferDetail
+
+
+@pytest.mark.django_db
+def test_offer_update_without_details_updates_only_offer(offer):
+    serializer = OfferUpdateSerializer(
+        offer,
+        data={"title": "Updated title"},
+        partial=True,
+    )
+
+    assert serializer.is_valid(), serializer.errors
+
+    updated_offer = serializer.save()
+    updated_offer.refresh_from_db()  # type:ignore
+
+    assert updated_offer.title == "Updated title"  # type:ignore
+
+
+@pytest.mark.django_db
+def test_offer_update_detail_without_features(offer):
+    detail = offer.details.first()
+
+    serializer = OfferUpdateSerializer(
+        offer,
+        data={
+            "details": [
+                {
+                    "offer_type": detail.offer_type,
+                    "price": 999,
+                }
+            ]
+        },
+        partial=True,
+    )
+
+    assert serializer.is_valid(), serializer.errors
+
+    serializer.save()
+    detail.refresh_from_db()
+
+    assert detail.price == 999
+
+
+@pytest.mark.django_db
+def test_offer_update_detail_with_features(offer):
+    detail = offer.details.first()
+
+    serializer = OfferUpdateSerializer(
+        offer,
+        data={
+            "details": [
+                {
+                    "offer_type": detail.offer_type,
+                    "features": ["New feature 1", "New feature 2"],
+                }
+            ]
+        },
+        partial=True,
+    )
+
+    assert serializer.is_valid(), serializer.errors
+
+    serializer.save()
+    detail.refresh_from_db()
+
+    assert list(detail.features.values_list("description", flat=True)) == [
+        "New feature 1",
+        "New feature 2",
+    ]
+
+
+@pytest.mark.django_db
+def test_offer_update_rejects_missing_offer_type_in_details(offer):
+    serializer = OfferUpdateSerializer(
+        offer,
+        data={
+            "details": [
+                {
+                    "price": 999,
+                }
+            ]
+        },
+        partial=True,
+    )
+
+    assert not serializer.is_valid()
+    assert "details" in serializer.errors
+
+
+@pytest.mark.django_db
+def test_offer_update_rejects_duplicate_offer_type(offer):
+    detail = offer.details.first()
+
+    serializer = OfferUpdateSerializer(
+        offer,
+        data={
+            "details": [
+                {"offer_type": detail.offer_type, "price": 100},
+                {"offer_type": detail.offer_type, "price": 200},
+            ]
+        },
+        partial=True,
+    )
+
+    assert not serializer.is_valid()
+    assert "details" in serializer.errors
+
+
+@pytest.mark.django_db
+def test_offer_update_rejects_valid_but_unknown_offer_type_inside_update(
+    offer,
+):
+    first_detail = offer.details.first()
+
+    # Remove all details except one, so another valid offer_type becomes "unknown"
+    offer.details.exclude(pk=first_detail.pk).delete()
+
+    existing_offer_types = set(offer.details.values_list("offer_type", flat=True))
+
+    unused_offer_type = next(
+        choice_value
+        for choice_value, _ in OfferDetail.OFFER_TYPE_CHOICES
+        if choice_value not in existing_offer_types
+    )
+
+    serializer = OfferUpdateSerializer(
+        offer,
+        data={
+            "details": [
+                {
+                    "offer_type": unused_offer_type,
+                    "price": 999,
+                }
+            ]
+        },
+        partial=True,
+    )
+
+    assert serializer.is_valid(), serializer.errors
+
+    with pytest.raises(serializers.ValidationError):
+        serializer.save()
 
 
 @pytest.mark.django_db
@@ -359,7 +502,6 @@ def test_update_details_raises_error_when_offer_type_missing(offer):
 
 
 @pytest.mark.django_db
-@pytest.mark.performance_regression
 def test_update_offer_query_count(
     django_assert_num_queries,
     business_user,
@@ -377,7 +519,7 @@ def test_update_offer_query_count(
 
     view = OfferRetrieveUpdateDestroyView.as_view()
 
-    with django_assert_num_queries(15):
+    with django_assert_num_queries(14):
         response = view(request, pk=offer.pk)
 
     assert response.status_code == status.HTTP_200_OK
