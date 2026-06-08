@@ -3,7 +3,24 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
 
-from offers_app.api.views import OfferRetrieveUpdateDestroyView
+from offers_app.api.views import OfferRetrieveSerializer, OfferRetrieveUpdateDestroyView
+
+
+@pytest.mark.django_db
+def test_offer_retrieve_serializer_uses_annotated_min_values(offer):
+    factory = APIRequestFactory()
+    request = factory.get(f"/api/offers/{offer.pk}/")
+
+    offer.annotated_min_price = 10
+    offer.annotated_min_delivery_time = 2
+
+    data = OfferRetrieveSerializer(
+        offer,
+        context={"request": request},
+    ).data
+
+    assert data["min_price"] == 10  # type:ignore
+    assert data["min_delivery_time"] == 2  # type:ignore
 
 
 @pytest.mark.django_db

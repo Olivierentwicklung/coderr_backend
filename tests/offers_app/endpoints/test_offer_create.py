@@ -2,8 +2,22 @@ import pytest
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
 
-from offers_app.api.views import OfferListCreateView
+from offers_app.api.views import OfferCreateSerializer, OfferListCreateView
 from offers_app.models import Offer, OfferDetail
+
+
+@pytest.mark.django_db
+def test_offer_create_serializer_rejects_not_exactly_three_details():
+    serializer = OfferCreateSerializer(
+        data={
+            "title": "Test offer",
+            "description": "Test description",
+            "details": [],
+        }
+    )
+
+    assert not serializer.is_valid()
+    assert "details" in serializer.errors
 
 
 @pytest.mark.django_db
