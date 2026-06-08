@@ -377,7 +377,7 @@ def test_update_offer_query_count(
 
     view = OfferRetrieveUpdateDestroyView.as_view()
 
-    with django_assert_num_queries(15):
+    with django_assert_num_queries(14):
         response = view(request, pk=offer.pk)
 
     assert response.status_code == status.HTTP_200_OK

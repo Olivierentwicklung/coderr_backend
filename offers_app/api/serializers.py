@@ -5,20 +5,14 @@ from offers_app.models import Offer, OfferDetail, OfferDetailFeature
 from uploads_app.models import FileUpload
 
 
-class OfferDetailLinkSerializer(serializers.ModelSerializer):
+class OfferDetailLinkSerializer(serializers.HyperlinkedModelSerializer):
     """Serializer for compact offer detail links."""
-
-    url = serializers.SerializerMethodField()
 
     class Meta:
         """Meta configuration for offer detail links."""
 
         model = OfferDetail
         fields = ["id", "url"]
-
-    def get_url(self, obj):
-        """Return the relative offer detail URL."""
-        return f"/offerdetails/{obj.id}/"
 
 
 class OfferListSerializer(serializers.ModelSerializer):
@@ -191,7 +185,9 @@ class OfferRetrieveSerializer(serializers.ModelSerializer):
     """Serializer for retrieving a single offer with all details."""
 
     user = serializers.IntegerField(source="business_user.id", read_only=True)
-    details = OfferDetailSerializer(many=True, read_only=True)
+    details = OfferDetailLinkSerializer(many=True, read_only=True)
+    min_price = serializers.SerializerMethodField()
+    min_delivery_time = serializers.SerializerMethodField()
 
     class Meta:
         """Meta configuration for offer retrieve serializer."""
@@ -206,7 +202,25 @@ class OfferRetrieveSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
             "details",
+            "min_price",
+            "min_delivery_time",
         ]
+
+    def get_min_price(self, obj):
+        """Return the lowest detail price of the offer."""
+        return (
+            getattr(obj, "annotated_min_price", None)
+            or obj.details.order_by("price").values_list("price", flat=True).first()
+        )
+
+    def get_min_delivery_time(self, obj):
+        """Return the shortest delivery time of the offer."""
+        return (
+            getattr(obj, "annotated_min_delivery_time", None)
+            or obj.details.order_by("delivery_time_in_days")
+            .values_list("delivery_time_in_days", flat=True)
+            .first()
+        )
 
 
 class OfferDetailUpdateSerializer(serializers.Serializer):

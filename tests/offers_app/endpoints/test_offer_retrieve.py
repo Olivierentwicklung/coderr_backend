@@ -33,22 +33,23 @@ def test_retrieve_offer_response_structure(
     authenticated_business,
     offer_detail_url,
 ):
-    """Retrieve response contains the expected offer fields."""
     response = authenticated_business.get(offer_detail_url)
 
     expected_fields = {
         "id",
-        "title",
         "user",
+        "title",
         "image",
         "description",
         "created_at",
         "updated_at",
         "details",
+        "min_price",
+        "min_delivery_time",
     }
 
     assert response.status_code == status.HTTP_200_OK
-    assert expected_fields.issubset(response.data.keys())
+    assert set(response.data.keys()) == expected_fields
 
 
 @pytest.mark.django_db
@@ -80,42 +81,16 @@ def test_retrieve_offer_contains_three_details(
 
 
 @pytest.mark.django_db
-def test_retrieve_offer_detail_structure(
+def test_retrieve_offer_details_contain_only_id_and_url(
     authenticated_business,
     offer_detail_url,
 ):
-    """Each returned offer detail contains the expected fields."""
     response = authenticated_business.get(offer_detail_url)
 
-    first_detail = response.data["details"][0]
-
-    expected_fields = {
-        "id",
-        "title",
-        "revisions",
-        "delivery_time_in_days",
-        "price",
-        "features",
-        "offer_type",
-    }
-
     assert response.status_code == status.HTTP_200_OK
-    assert expected_fields.issubset(first_detail.keys())
 
-
-@pytest.mark.django_db
-def test_retrieve_offer_contains_detail_features(
-    authenticated_business,
-    offer_detail_url,
-):
-    """Offer detail features are returned as a list of strings."""
-    response = authenticated_business.get(offer_detail_url)
-
-    first_detail = response.data["details"][0]
-
-    assert response.status_code == status.HTTP_200_OK
-    assert isinstance(first_detail["features"], list)
-    assert first_detail["features"]
+    for detail in response.data["details"]:
+        assert set(detail.keys()) == {"id", "url"}
 
 
 @pytest.mark.django_db
@@ -144,7 +119,7 @@ def test_retrieve_offer_query_count(
 
     view = OfferRetrieveUpdateDestroyView.as_view()
 
-    with django_assert_num_queries(6):
+    with django_assert_num_queries(5):
         response = view(request, pk=offer.pk)
 
     assert response.status_code == status.HTTP_200_OK
