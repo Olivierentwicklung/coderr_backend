@@ -110,7 +110,6 @@ def test_base_info_returns_500_when_unexpected_database_error_occurs(
 
 
 @pytest.mark.django_db
-@pytest.mark.performance_regression
 def test_base_info_query_count_is_stable(
     django_assert_num_queries,
     business_user,

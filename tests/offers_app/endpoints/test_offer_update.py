@@ -502,7 +502,6 @@ def test_update_details_raises_error_when_offer_type_missing(offer):
 
 
 @pytest.mark.django_db
-@pytest.mark.performance_regression
 def test_update_offer_query_count(
     django_assert_num_queries,
     business_user,

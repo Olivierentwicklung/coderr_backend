@@ -276,7 +276,6 @@ def test_create_offer_rejects_empty_features(
 
 
 @pytest.mark.django_db
-@pytest.mark.performance_regression
 def test_create_offer_query_count(
     django_assert_num_queries,
     offers_list_url,

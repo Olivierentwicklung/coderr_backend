@@ -57,7 +57,6 @@ def test_review_delete_returns_404_for_unknown_review(authenticated_customer):
 
 
 @pytest.mark.django_db
-@pytest.mark.performance_regression
 def test_review_delete_query_count(django_assert_num_queries, customer_user, review):
     """Verify review delete query count does not regress."""
     factory = APIRequestFactory()

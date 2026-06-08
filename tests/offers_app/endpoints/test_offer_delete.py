@@ -78,7 +78,6 @@ def test_delete_offer_returns_404_for_unknown_offer(
 
 
 @pytest.mark.django_db
-@pytest.mark.performance_regression
 def test_delete_offer_query_count(
     django_assert_num_queries,
     business_user,
