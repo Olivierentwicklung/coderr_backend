@@ -153,6 +153,7 @@ def test_update_order_status_returns_404_for_unknown_order(
     )
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert response.data["detail"] == "The specified order was not found."
 
 
 @pytest.mark.django_db
