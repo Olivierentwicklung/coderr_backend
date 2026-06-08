@@ -74,6 +74,22 @@ def test_create_order_requires_offer_detail_id(authenticated_customer, orders_li
 
 
 @pytest.mark.django_db
+def test_create_order_requires_valid_offer_detail_id(
+    authenticated_customer,
+    orders_list_url,
+):
+    response = authenticated_customer.post(
+        orders_list_url,
+        {"offer_detail_id": "abc"},
+        format="json",
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert Order.objects.count() == 0
+    assert "offer_detail_id" in response.data
+
+
+@pytest.mark.django_db
 def test_create_order_returns_404_for_unknown_offer_detail(
     authenticated_customer,
     orders_list_url,

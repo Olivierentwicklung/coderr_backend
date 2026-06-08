@@ -51,6 +51,14 @@ class OrderListCreateView(generics.ListCreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        try:
+            offer_detail_id = int(offer_detail_id)
+        except (TypeError, ValueError):
+            return Response(
+                {"offer_detail_id": ["A valid integer is required."]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         offer_detail = get_object_or_404(
             OfferDetail.objects.select_related("offer").prefetch_related("features"),
             pk=offer_detail_id,
