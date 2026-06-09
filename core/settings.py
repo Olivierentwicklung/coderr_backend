@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "django_filters",
+    "drf_spectacular",
     "users_auth_app.apps.UsersAuthAppConfig",
     "uploads_app.apps.UploadsAppConfig",
     "reviews_app.apps.ReviewsAppConfig",
@@ -156,6 +157,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
     ],
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 
@@ -165,4 +167,12 @@ JAZZMIN_SETTINGS = {
     "site_brand": "DA & Olivier kanmind ",
     "welcome_sign": "Welcome to DA & Olivier kanmind  Admin",
     "copyright": "DA & Olivier Lowe",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "coderr API Endpoint Dokumentation",
+    "DESCRIPTION": "A modern freelance marketplace backend built with Django REST Framework.",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    # OTHER SETTINGS
 }
