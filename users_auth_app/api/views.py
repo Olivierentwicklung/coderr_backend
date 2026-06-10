@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from drf_spectacular.utils import extend_schema
 from rest_framework import generics, status
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -17,6 +18,7 @@ from .serializers import (
 User = get_user_model()
 
 
+@extend_schema(tags=["Authentication"])
 class RegistrationView(APIView):
     """
     API endpoint for user registration.
@@ -62,6 +64,7 @@ class RegistrationView(APIView):
         )
 
 
+@extend_schema(tags=["Authentication"])
 class LoginView(APIView):
     """
     API endpoint for user login.
@@ -100,6 +103,7 @@ class LoginView(APIView):
         )
 
 
+@extend_schema(tags=["Profile"])
 class ProfileDetailView(generics.RetrieveUpdateAPIView):
     """
     API endpoint for retrieving and updating user profiles.
@@ -113,6 +117,7 @@ class ProfileDetailView(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated, IsProfileOwnerOrReadOnly]
 
 
+@extend_schema(tags=["Profile"])
 class BusinessProfileListView(generics.ListAPIView):
     """
     API endpoint for listing business profiles.
@@ -129,6 +134,7 @@ class BusinessProfileListView(generics.ListAPIView):
         return User.objects.select_related("file").filter(type="business")
 
 
+@extend_schema(tags=["Profile"])
 class CustomerProfileListView(generics.ListAPIView):
     """
     API endpoint for listing customer profiles.
