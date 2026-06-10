@@ -1,4 +1,5 @@
 from django.db import OperationalError
+from drf_spectacular.utils import extend_schema
 from rest_framework import generics, status
 from rest_framework.response import Response
 
@@ -7,6 +8,7 @@ from reviews_app.api.serializers import ReviewSerializer
 from reviews_app.models import Review
 
 
+@extend_schema(tags=["Bewertungen (reviews)"])
 class ReviewListCreateView(generics.ListCreateAPIView):
     """List reviews and allow authenticated customers to create reviews."""
 
@@ -47,6 +49,7 @@ class ReviewListCreateView(generics.ListCreateAPIView):
         serializer.save(reviewer=self.request.user)
 
 
+@extend_schema(tags=["Bewertungen (reviews)"])
 class ReviewDetailView(generics.RetrieveUpdateDestroyAPIView):
     """Retrieve, update, and delete review instances."""
 

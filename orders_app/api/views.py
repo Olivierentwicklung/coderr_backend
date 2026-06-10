@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
+from drf_spectacular.utils import extend_schema
 from rest_framework import generics, status
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
@@ -15,6 +16,7 @@ from orders_app.models import Order
 User = get_user_model()
 
 
+@extend_schema(tags=["Bestellungen (orders)"])
 class OrderListCreateView(generics.ListCreateAPIView):
     """List related orders or create a new order from an offer detail."""
 
@@ -75,6 +77,7 @@ class OrderListCreateView(generics.ListCreateAPIView):
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 
 
+@extend_schema(tags=["Bestellungen (orders)"])
 class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
     """Update or delete a single order."""
 
@@ -132,6 +135,7 @@ class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+@extend_schema(tags=["Bestellungen (orders)"])
 class OrderCountView(APIView):
     """Return the number of in-progress orders for a business user."""
 
@@ -161,6 +165,7 @@ class OrderCountView(APIView):
         )
 
 
+@extend_schema(tags=["Bestellungen (orders)"])
 class CompletedOrderCountView(APIView):
     """Return the number of completed orders for a business user."""
 

@@ -2,6 +2,7 @@ from decimal import ROUND_HALF_UP, Decimal
 
 from django.contrib.auth import get_user_model
 from django.db.models import Avg
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -13,6 +14,7 @@ from reviews_app.models import Review
 User = get_user_model()
 
 
+@extend_schema(tags=["Übergreifende Endpoints"])
 class BaseInfoView(APIView):
     """Return public platform-wide base statistics."""
 

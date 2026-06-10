@@ -1,6 +1,7 @@
 from django.db.models import Min, Prefetch
 from django.http import Http404
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import extend_schema
 from rest_framework import filters, generics, permissions, status
 from rest_framework.exceptions import APIException, ValidationError
 from rest_framework.response import Response
@@ -18,6 +19,7 @@ from offers_app.api.serializers import (
 from offers_app.models import Offer, OfferDetail
 
 
+@extend_schema(tags=["Angebote (offers)"])
 class OfferListCreateView(generics.ListCreateAPIView):
     """API view for listing and creating offers."""
 
@@ -77,6 +79,7 @@ class OfferListCreateView(generics.ListCreateAPIView):
         raise ValidationError({"ordering": "Invalid ordering field."})
 
 
+@extend_schema(tags=["Angebote (offers)"])
 class OfferRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     """API view for retrieving, updating, and deleting a single offer."""
 
@@ -145,6 +148,7 @@ class OfferRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
             )
 
 
+@extend_schema(tags=["Angebote (offers)"])
 class OfferDetailRetrieveView(generics.RetrieveAPIView):
     """API view for retrieving a single offer detail."""
 
