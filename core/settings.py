@@ -174,5 +174,34 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "A modern freelance marketplace backend built with Django REST Framework.",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    "TAGS": [
+        {"name": "Authentication", "description": "Login und Registrierung"},
+        {
+            "name": "Profile",
+            "description": "Alles an CRUD das für das Frontend eine Rolle spielt",
+        },
+        {
+            "name": "Angebote (offers)",
+            "description": "Alles an CRUD das für das Frontend eine Rolle spielt",
+        },
+        {
+            "name": "Bestellungen (orders)",
+            "description": "Alles an CRUD das für das Frontend eine Rolle spielt",
+        },
+        {
+            "name": "Bewertungen (reviews)",
+            "description": "Alles an CRUD das für das Frontend eine Rolle spielt",
+        },
+        {
+            "name": "Übergreifende Endpoints",
+            "description": "Alle Endpoints die übergreifende z.B. aggregierende Funktionene haben",
+        },
+    ],
+    "SWAGGER_UI_SETTINGS": {
+        "deepLinking": True,
+        "tagsSorter": "none",
+        "operationsSorter": "alpha",
+    },
+    "SORT_OPERATIONS": True,
     # OTHER SETTINGS
 }
