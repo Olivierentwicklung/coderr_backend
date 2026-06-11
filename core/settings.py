@@ -198,9 +198,12 @@ SPECTACULAR_SETTINGS = {
         },
     ],
     "SWAGGER_UI_SETTINGS": {
-        "deepLinking": True,
+        "docExpansion": "list",  # or "full"
         "tagsSorter": "none",
-        "operationsSorter": "alpha",
+        "operationsSorter": "none",
+        # docExpansion = "none"  # closed
+        # docExpansion = "list"  # only operations visible
+        # docExpansion = "full"  # everything opened
     },
     "SORT_OPERATIONS": True,
     # OTHER SETTINGS
