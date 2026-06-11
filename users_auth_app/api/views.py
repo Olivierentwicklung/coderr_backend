@@ -7,7 +7,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .permissions import IsProfileOwnerOrReadOnly
-from .schema import AUTH_TAG, REGISTRATION_DESCRIPTION, REGISTRATION_EXAMPLES
+from .schema.base_schema import AUTH_TAG
+from .schema.registration_schema import REGISTRATION_DESCRIPTION, REGISTRATION_EXAMPLES
 from .serializers import (
     BusinessProfileListSerializer,
     CustomerProfileListSerializer,
