@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 
 from .permissions import IsProfileOwnerOrReadOnly
 from .schema.base_schema import AUTH_TAG
+from .schema.login_schema import LOGIN_DESCRIPTION, LOGIN_EXAMPLES
 from .schema.registration_schema import REGISTRATION_DESCRIPTION, REGISTRATION_EXAMPLES
 from .serializers import (
     BusinessProfileListSerializer,
@@ -71,7 +72,12 @@ class RegistrationView(APIView):
         )
 
 
-@extend_schema(tags=["Authentication"])
+@extend_schema(
+    tags=AUTH_TAG,
+    description=LOGIN_DESCRIPTION,
+    request=LoginSerializer,
+    examples=LOGIN_EXAMPLES,
+)
 class LoginView(APIView):
     """
     API endpoint for user login.
