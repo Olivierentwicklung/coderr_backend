@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .permissions import IsProfileOwnerOrReadOnly
+from .schema import AUTH_TAG, REGISTRATION_DESCRIPTION, REGISTRATION_EXAMPLES
 from .serializers import (
     BusinessProfileListSerializer,
     CustomerProfileListSerializer,
@@ -18,7 +19,12 @@ from .serializers import (
 User = get_user_model()
 
 
-@extend_schema(tags=["Authentication"])
+@extend_schema(
+    tags=AUTH_TAG,
+    description=REGISTRATION_DESCRIPTION,
+    request=RegistrationSerializer,
+    examples=REGISTRATION_EXAMPLES,
+)
 class RegistrationView(APIView):
     """
     API endpoint for user registration.
