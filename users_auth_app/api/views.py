@@ -24,6 +24,9 @@ from .schema.profile_detail_update_schema import (
     PROFILE_DETAIL_UPDATE_EXAMPLES,
     PROFILE_DETAIL_UPDATE_PARAMETERS,
 )
+from .schema.profiles_business_retrieve_schema import (
+    PROFILE_BUSINESS_RETRIEVE_DESCRIPTION,
+)
 from .schema.registration_schema import REGISTRATION_DESCRIPTION, REGISTRATION_EXAMPLES
 from .serializers import (
     BusinessProfileListSerializer,
@@ -167,7 +170,7 @@ class ProfileDetailView(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated, IsProfileOwnerOrReadOnly]
 
 
-@extend_schema(tags=["Profile"])
+@extend_schema(tags=PROFILE_TAG, description=PROFILE_BUSINESS_RETRIEVE_DESCRIPTION)
 class BusinessProfileListView(generics.ListAPIView):
     """
     API endpoint for listing business profiles.
@@ -184,7 +187,7 @@ class BusinessProfileListView(generics.ListAPIView):
         return User.objects.select_related("file").filter(type="business")
 
 
-@extend_schema(tags=["Profile"])
+@extend_schema(tags=PROFILE_TAG)
 class CustomerProfileListView(generics.ListAPIView):
     """
     API endpoint for listing customer profiles.
