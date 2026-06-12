@@ -9,6 +9,11 @@ from rest_framework.views import APIView
 from .permissions import IsProfileOwnerOrReadOnly
 from .schema.base_schema import AUTH_TAG, PROFILE_TAG
 from .schema.login_schema import LOGIN_DESCRIPTION, LOGIN_EXAMPLES
+from .schema.profile_detail_partial_update_schema import (
+    PROFILE_DETAIL_PARTIAL_UPDATE_DESCRIPTION,
+    PROFILE_DETAIL_PARTIAL_UPDATE_EXAMPLES,
+    PROFILE_DETAIL_PARTIAL_UPDATE_PARAMETERS,
+)
 from .schema.profile_detail_retrieve_schema import (
     PROFILE_DETAIL_RETRIEVE_DESCRIPTION,
     PROFILE_DETAIL_RETRIEVE_EXAMPLES,
@@ -141,13 +146,13 @@ class LoginView(APIView):
         responses={200: ProfileDetailSerializer},
         examples=PROFILE_DETAIL_UPDATE_EXAMPLES,
     ),
-    # patch=extend_schema(
-    #     description=PROFILE_DETAIL_PARTIAL_UPDATE_DESCRIPTION,
-    #     parameters=PROFILE_DETAIL_RETRIEVE_PARAMETERS,
-    #     request=ProfileDetailSerializer,
-    #     responses={200: ProfileDetailSerializer},
-    #     examples=PROFILE_DETAIL_PARTIAL_UPDATE_EXAMPLES,
-    # ),
+    patch=extend_schema(
+        description=PROFILE_DETAIL_PARTIAL_UPDATE_DESCRIPTION,
+        parameters=PROFILE_DETAIL_PARTIAL_UPDATE_PARAMETERS,
+        request=ProfileDetailSerializer,
+        responses={200: ProfileDetailSerializer},
+        examples=PROFILE_DETAIL_PARTIAL_UPDATE_EXAMPLES,
+    ),
 )
 class ProfileDetailView(generics.RetrieveUpdateAPIView):
     """
