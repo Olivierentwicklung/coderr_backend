@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import (
+    extend_schema,
+)
 from rest_framework import generics, status
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -9,6 +11,11 @@ from rest_framework.views import APIView
 from .permissions import IsProfileOwnerOrReadOnly
 from .schema.base_schema import AUTH_TAG
 from .schema.login_schema import LOGIN_DESCRIPTION, LOGIN_EXAMPLES
+from .schema.profile_detail_retrieve_schema import (
+    PROFILE_DETAIL_RETRIEVE_DESCRIPTION,
+    PROFILE_DETAIL_RETRIEVE_EXAMPLES,
+    PROFILE_DETAIL_RETRIEVE_PARAMETERS,
+)
 from .schema.registration_schema import REGISTRATION_DESCRIPTION, REGISTRATION_EXAMPLES
 from .serializers import (
     BusinessProfileListSerializer,
@@ -116,7 +123,12 @@ class LoginView(APIView):
         )
 
 
-@extend_schema(tags=["Profile"])
+@extend_schema(
+    tags=["Profile"],
+    description=PROFILE_DETAIL_RETRIEVE_DESCRIPTION,
+    parameters=PROFILE_DETAIL_RETRIEVE_PARAMETERS,
+    examples=PROFILE_DETAIL_RETRIEVE_EXAMPLES,
+)
 class ProfileDetailView(generics.RetrieveUpdateAPIView):
     """
     API endpoint for retrieving and updating user profiles.

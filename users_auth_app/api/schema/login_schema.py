@@ -32,7 +32,7 @@ Erfolgreiche Authentifizierung gibt ein Token sowie Benutzerinformationen zurüc
 -   **400**: Ungültige Anfragedaten.
 -   **500**: Interner Serverfehler.
 
-### Rate Limit
+### Rate Limits
 
 - No limit.
 

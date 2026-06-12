@@ -35,7 +35,7 @@ Erfolgreicher Erstellung gibt dies ein Token sowie die Benutzerinformationen zur
 -   **400**: Ungültige Anfragedaten.
 -   **500**: Interner Serverfehler.
 
-### Rate Limit
+### Rate Limits
 
 - No limit.
 
