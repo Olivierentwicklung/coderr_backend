@@ -1,5 +1,3 @@
-from drf_spectacular.utils import OpenApiExample, OpenApiParameter
-
 PROFILE_DETAIL_RETRIEVE_DESCRIPTION = """
 
 **Description**: Ruft die detaillierten Informationen eines Benutzerprofils ab (sowohl für Kunden- als auch für Geschäftsnutzer). Ermöglicht auch das Bearbeiten der Profildaten (PATCH).
@@ -59,24 +57,3 @@ Die Antwort enthält die vollständigen Profildaten eines spezifischen Benutzers
 -   No Extra Information
 
 """
-
-PROFILE_DETAIL_RETRIEVE_PARAMETERS = [
-    OpenApiParameter(
-        name="pk",
-        type=int,
-        location=OpenApiParameter.PATH,
-        description="User ID",
-    )
-]
-PROFILE_DETAIL_RETRIEVE_EXAMPLES = [
-    OpenApiExample(
-        "Existing User",
-        value={
-            "id": 3,
-            "username": "customer123",
-            "email": "customer@example.com",
-        },
-        response_only=True,
-        status_codes=["200"],
-    ),
-]

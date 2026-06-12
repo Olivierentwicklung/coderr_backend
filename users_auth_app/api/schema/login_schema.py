@@ -1,5 +1,3 @@
-from drf_spectacular.utils import OpenApiExample
-
 LOGIN_DESCRIPTION = """
 
 **Description**: Authentifiziert einen Benutzer und liefert ein Authentifizierungs-Token zurück, das für weitere API-Anfragen genutzt wird.
@@ -45,30 +43,3 @@ Erfolgreiche Authentifizierung gibt ein Token sowie Benutzerinformationen zurüc
 -   No Extra Information
 
 """
-
-LOGIN_EXAMPLES = [
-    OpenApiExample(
-        "Customer Login",
-        value={
-            "username": "customer123",
-            "password": "SecurePassword123!",
-        },
-        request_only=True,
-    ),
-    OpenApiExample(
-        "Business Login",
-        value={
-            "username": "business123",
-            "password": "SecurePassword123!",
-        },
-        request_only=True,
-    ),
-    OpenApiExample(
-        "Nicht Erfolgreiche Anmeldung",
-        value={
-            "username": "business123",
-            "password": "SecurePassword123!!",
-        },
-        request_only=True,
-    ),
-]

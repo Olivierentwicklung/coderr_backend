@@ -1,5 +1,3 @@
-from drf_spectacular.utils import OpenApiExample, OpenApiParameter
-
 PROFILE_DETAIL_PARTIAL_UPDATE_DESCRIPTION = """
 
 **Description**: Ermöglicht es einem Benutzer, bestimmte Profilinformationen zu aktualisieren.
@@ -61,22 +59,3 @@ Die Antwort enthält das aktualisierte Profil des Benutzers. Die Felder first_na
 -   No Extra Information
 
 """
-
-PROFILE_DETAIL_PARTIAL_UPDATE_PARAMETERS = [
-    OpenApiParameter(
-        name="pk",
-        type=int,
-        location=OpenApiParameter.PATH,
-        description="User ID",
-    )
-]
-PROFILE_DETAIL_PARTIAL_UPDATE_EXAMPLES = [
-    OpenApiExample(
-        "Customer Profile Partial Update ",
-        value={
-            "location": "Hamburg",
-            "tel": "987654321",
-        },
-        request_only=True,
-    ),
-]

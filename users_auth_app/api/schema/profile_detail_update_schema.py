@@ -1,5 +1,3 @@
-from drf_spectacular.utils import OpenApiExample, OpenApiParameter
-
 PROFILE_DETAIL_UPDATE_DESCRIPTION = """
 
 **Description**: Ermöglicht es einem Benutzer, bestimmte Profilinformationen zu aktualisieren.
@@ -66,28 +64,3 @@ Die Antwort enthält das aktualisierte Profil des Benutzers. Die Felder first_na
 -   No Extra Information
 
 """
-
-PROFILE_DETAIL_UPDATE_PARAMETERS = [
-    OpenApiParameter(
-        name="pk",
-        type=int,
-        location=OpenApiParameter.PATH,
-        description="User ID",
-    )
-]
-PROFILE_DETAIL_UPDATE_EXAMPLES = [
-    OpenApiExample(
-        "Customer Profile Update",
-        value={
-            "first_name": "Max",
-            "last_name": "Mustermann",
-            "file": None,
-            "location": "Berlin",
-            "tel": "123456789",
-            "description": "Neue Beschreibung",
-            "working_hours": "9-17",
-            "email": "new_email@business.de",
-        },
-        request_only=True,
-    ),
-]

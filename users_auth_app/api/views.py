@@ -8,21 +8,15 @@ from rest_framework.views import APIView
 
 from .permissions import IsProfileOwnerOrReadOnly
 from .schema.base_schema import AUTH_TAG, PROFILE_TAG
-from .schema.login_schema import LOGIN_DESCRIPTION, LOGIN_EXAMPLES
+from .schema.login_schema import LOGIN_DESCRIPTION
 from .schema.profile_detail_partial_update_schema import (
     PROFILE_DETAIL_PARTIAL_UPDATE_DESCRIPTION,
-    PROFILE_DETAIL_PARTIAL_UPDATE_EXAMPLES,
-    PROFILE_DETAIL_PARTIAL_UPDATE_PARAMETERS,
 )
 from .schema.profile_detail_retrieve_schema import (
     PROFILE_DETAIL_RETRIEVE_DESCRIPTION,
-    PROFILE_DETAIL_RETRIEVE_EXAMPLES,
-    PROFILE_DETAIL_RETRIEVE_PARAMETERS,
 )
 from .schema.profile_detail_update_schema import (
     PROFILE_DETAIL_UPDATE_DESCRIPTION,
-    PROFILE_DETAIL_UPDATE_EXAMPLES,
-    PROFILE_DETAIL_UPDATE_PARAMETERS,
 )
 from .schema.profiles_business_retrieve_schema import (
     PROFILE_BUSINESS_RETRIEVE_DESCRIPTION,
@@ -30,7 +24,7 @@ from .schema.profiles_business_retrieve_schema import (
 from .schema.profiles_customer_retrieve_schema import (
     PROFILE_CUSTOMER_RETRIEVE_DESCRIPTION,
 )
-from .schema.registration_schema import REGISTRATION_DESCRIPTION, REGISTRATION_EXAMPLES
+from .schema.registration_schema import REGISTRATION_DESCRIPTION
 from .serializers import (
     BusinessProfileListSerializer,
     CustomerProfileListSerializer,
@@ -42,12 +36,6 @@ from .serializers import (
 User = get_user_model()
 
 
-@extend_schema(
-    tags=AUTH_TAG,
-    description=REGISTRATION_DESCRIPTION,
-    request=RegistrationSerializer,
-    examples=REGISTRATION_EXAMPLES,
-)
 class RegistrationView(APIView):
     """
     API endpoint for user registration.
@@ -59,6 +47,11 @@ class RegistrationView(APIView):
 
     permission_classes = [AllowAny]
 
+    @extend_schema(
+        tags=AUTH_TAG,
+        description=REGISTRATION_DESCRIPTION,
+        request=RegistrationSerializer,
+    )
     def post(self, request):
         """
         Register a new user.
@@ -93,12 +86,6 @@ class RegistrationView(APIView):
         )
 
 
-@extend_schema(
-    tags=AUTH_TAG,
-    description=LOGIN_DESCRIPTION,
-    request=LoginSerializer,
-    examples=LOGIN_EXAMPLES,
-)
 class LoginView(APIView):
     """
     API endpoint for user login.
@@ -109,6 +96,11 @@ class LoginView(APIView):
 
     permission_classes = [AllowAny]
 
+    @extend_schema(
+        tags=AUTH_TAG,
+        description=LOGIN_DESCRIPTION,
+        request=LoginSerializer,
+    )
     def post(self, request):
         """
         Log in a user and return an authentication token.
@@ -141,23 +133,12 @@ class LoginView(APIView):
 @extend_schema_view(
     get=extend_schema(
         description=PROFILE_DETAIL_RETRIEVE_DESCRIPTION,
-        parameters=PROFILE_DETAIL_RETRIEVE_PARAMETERS,
-        responses={200: ProfileDetailSerializer},
-        examples=PROFILE_DETAIL_RETRIEVE_EXAMPLES,
     ),
     put=extend_schema(
         description=PROFILE_DETAIL_UPDATE_DESCRIPTION,
-        parameters=PROFILE_DETAIL_UPDATE_PARAMETERS,
-        request=ProfileDetailSerializer,
-        responses={200: ProfileDetailSerializer},
-        examples=PROFILE_DETAIL_UPDATE_EXAMPLES,
     ),
     patch=extend_schema(
         description=PROFILE_DETAIL_PARTIAL_UPDATE_DESCRIPTION,
-        parameters=PROFILE_DETAIL_PARTIAL_UPDATE_PARAMETERS,
-        request=ProfileDetailSerializer,
-        responses={200: ProfileDetailSerializer},
-        examples=PROFILE_DETAIL_PARTIAL_UPDATE_EXAMPLES,
     ),
 )
 class ProfileDetailView(generics.RetrieveUpdateAPIView):
