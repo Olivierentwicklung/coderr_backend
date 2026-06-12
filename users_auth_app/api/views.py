@@ -14,6 +14,11 @@ from .schema.profile_detail_retrieve_schema import (
     PROFILE_DETAIL_RETRIEVE_EXAMPLES,
     PROFILE_DETAIL_RETRIEVE_PARAMETERS,
 )
+from .schema.profile_detail_update_schema import (
+    PROFILE_DETAIL_UPDATE_DESCRIPTION,
+    PROFILE_DETAIL_UPDATE_EXAMPLES,
+    PROFILE_DETAIL_UPDATE_PARAMETERS,
+)
 from .schema.registration_schema import REGISTRATION_DESCRIPTION, REGISTRATION_EXAMPLES
 from .serializers import (
     BusinessProfileListSerializer,
@@ -129,13 +134,13 @@ class LoginView(APIView):
         responses={200: ProfileDetailSerializer},
         examples=PROFILE_DETAIL_RETRIEVE_EXAMPLES,
     ),
-    # put=extend_schema(
-    #     description=PROFILE_DETAIL_UPDATE_DESCRIPTION,
-    #     parameters=PROFILE_DETAIL_RETRIEVE_PARAMETERS,
-    #     request=ProfileDetailSerializer,
-    #     responses={200: ProfileDetailSerializer},
-    #     examples=PROFILE_DETAIL_UPDATE_EXAMPLES,
-    # ),
+    put=extend_schema(
+        description=PROFILE_DETAIL_UPDATE_DESCRIPTION,
+        parameters=PROFILE_DETAIL_UPDATE_PARAMETERS,
+        request=ProfileDetailSerializer,
+        responses={200: ProfileDetailSerializer},
+        examples=PROFILE_DETAIL_UPDATE_EXAMPLES,
+    ),
     # patch=extend_schema(
     #     description=PROFILE_DETAIL_PARTIAL_UPDATE_DESCRIPTION,
     #     parameters=PROFILE_DETAIL_RETRIEVE_PARAMETERS,
