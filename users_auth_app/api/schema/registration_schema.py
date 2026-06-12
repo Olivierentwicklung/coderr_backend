@@ -1,9 +1,6 @@
 from drf_spectacular.utils import OpenApiExample
 
-AUTH_TAG = ["Authentication"]
-
 REGISTRATION_DESCRIPTION = """
-## Registrierung
 
 **Description**: Erstellt einen neuen Benutzer. Dieser Benutzer kann entweder ein **Customer**- oder **Business**-User sein.
 
@@ -18,14 +15,6 @@ REGISTRATION_DESCRIPTION = """
   "type": "customer"
 }
 ```
-
-| Feld | Typ | Pflicht | Beschreibung |
-|--------|--------|--------|--------|
-| username | string | ✅ | Eindeutiger Benutzername |
-| email | string | ✅ | E-Mail-Adresse |
-| password | string | ✅ | Passwort |
-| repeated_password | string | ✅ | Passwort-Bestätigung |
-| type | string | ✅ | customer oder business |
 
 ### Success Response
 
@@ -42,24 +31,27 @@ Erfolgreicher Erstellung gibt dies ein Token sowie die Benutzerinformationen zur
 
 ### Status Codes
 
-| Code | Beschreibung |
-|--------|--------|
-| 201 | Benutzer erfolgreich erstellt |
-| 400 | Ungültige Eingabedaten |
-| 500 | Interner Serverfehler |
+-   **201**: Der Benutzer wurde erfolgreich erstellt.
+-   **400**: Ungültige Anfragedaten.
+-   **500**: Interner Serverfehler.
 
-### Berechtigung
+### Rate Limits
 
-Für diesen Endpunkt sind keine Berechtigungen erforderlich.
+- No limit.
 
-### Rate Limit
+### Permissions required: 
 
-Kein Rate Limit.
+- No Permissions required
+
+### Extra Information:
+
+-   No Extra Information
+
 """
 
 REGISTRATION_EXAMPLES = [
     OpenApiExample(
-        "Customer Registrierung",
+        "Customer Registration",
         value={
             "username": "customer123",
             "email": "customer@example.com",
@@ -70,7 +62,7 @@ REGISTRATION_EXAMPLES = [
         request_only=True,
     ),
     OpenApiExample(
-        "Business Registrierung",
+        "Business Registration",
         value={
             "username": "business123",
             "email": "business@example.com",
@@ -83,7 +75,7 @@ REGISTRATION_EXAMPLES = [
     OpenApiExample(
         "Fehlende E-Mail",
         value={
-            "username": "customer123",
+            "username": "customer1234",
             "password": "SecurePassword123!",
             "repeated_password": "SecurePassword123!",
             "type": "customer",
@@ -93,8 +85,8 @@ REGISTRATION_EXAMPLES = [
     OpenApiExample(
         "Passwörter stimmen nicht überein",
         value={
-            "username": "customer123",
-            "email": "customer@example.com",
+            "username": "customer1234",
+            "email": "customer1234@example.com",
             "password": "Password123!",
             "repeated_password": "DifferentPassword123!",
             "type": "customer",

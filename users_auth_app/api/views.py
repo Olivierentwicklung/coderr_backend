@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import generics, status
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -7,7 +7,30 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .permissions import IsProfileOwnerOrReadOnly
-from .schema import AUTH_TAG, REGISTRATION_DESCRIPTION, REGISTRATION_EXAMPLES
+from .schema.base_schema import AUTH_TAG, PROFILE_TAG
+from .schema.login_schema import LOGIN_DESCRIPTION, LOGIN_EXAMPLES
+from .schema.profile_detail_partial_update_schema import (
+    PROFILE_DETAIL_PARTIAL_UPDATE_DESCRIPTION,
+    PROFILE_DETAIL_PARTIAL_UPDATE_EXAMPLES,
+    PROFILE_DETAIL_PARTIAL_UPDATE_PARAMETERS,
+)
+from .schema.profile_detail_retrieve_schema import (
+    PROFILE_DETAIL_RETRIEVE_DESCRIPTION,
+    PROFILE_DETAIL_RETRIEVE_EXAMPLES,
+    PROFILE_DETAIL_RETRIEVE_PARAMETERS,
+)
+from .schema.profile_detail_update_schema import (
+    PROFILE_DETAIL_UPDATE_DESCRIPTION,
+    PROFILE_DETAIL_UPDATE_EXAMPLES,
+    PROFILE_DETAIL_UPDATE_PARAMETERS,
+)
+from .schema.profiles_business_retrieve_schema import (
+    PROFILE_BUSINESS_RETRIEVE_DESCRIPTION,
+)
+from .schema.profiles_customer_retrieve_schema import (
+    PROFILE_CUSTOMER_RETRIEVE_DESCRIPTION,
+)
+from .schema.registration_schema import REGISTRATION_DESCRIPTION, REGISTRATION_EXAMPLES
 from .serializers import (
     BusinessProfileListSerializer,
     CustomerProfileListSerializer,
@@ -70,7 +93,12 @@ class RegistrationView(APIView):
         )
 
 
-@extend_schema(tags=["Authentication"])
+@extend_schema(
+    tags=AUTH_TAG,
+    description=LOGIN_DESCRIPTION,
+    request=LoginSerializer,
+    examples=LOGIN_EXAMPLES,
+)
 class LoginView(APIView):
     """
     API endpoint for user login.
@@ -109,7 +137,29 @@ class LoginView(APIView):
         )
 
 
-@extend_schema(tags=["Profile"])
+@extend_schema(tags=PROFILE_TAG)
+@extend_schema_view(
+    get=extend_schema(
+        description=PROFILE_DETAIL_RETRIEVE_DESCRIPTION,
+        parameters=PROFILE_DETAIL_RETRIEVE_PARAMETERS,
+        responses={200: ProfileDetailSerializer},
+        examples=PROFILE_DETAIL_RETRIEVE_EXAMPLES,
+    ),
+    put=extend_schema(
+        description=PROFILE_DETAIL_UPDATE_DESCRIPTION,
+        parameters=PROFILE_DETAIL_UPDATE_PARAMETERS,
+        request=ProfileDetailSerializer,
+        responses={200: ProfileDetailSerializer},
+        examples=PROFILE_DETAIL_UPDATE_EXAMPLES,
+    ),
+    patch=extend_schema(
+        description=PROFILE_DETAIL_PARTIAL_UPDATE_DESCRIPTION,
+        parameters=PROFILE_DETAIL_PARTIAL_UPDATE_PARAMETERS,
+        request=ProfileDetailSerializer,
+        responses={200: ProfileDetailSerializer},
+        examples=PROFILE_DETAIL_PARTIAL_UPDATE_EXAMPLES,
+    ),
+)
 class ProfileDetailView(generics.RetrieveUpdateAPIView):
     """
     API endpoint for retrieving and updating user profiles.
@@ -123,7 +173,7 @@ class ProfileDetailView(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated, IsProfileOwnerOrReadOnly]
 
 
-@extend_schema(tags=["Profile"])
+@extend_schema(tags=PROFILE_TAG, description=PROFILE_BUSINESS_RETRIEVE_DESCRIPTION)
 class BusinessProfileListView(generics.ListAPIView):
     """
     API endpoint for listing business profiles.
@@ -140,7 +190,7 @@ class BusinessProfileListView(generics.ListAPIView):
         return User.objects.select_related("file").filter(type="business")
 
 
-@extend_schema(tags=["Profile"])
+@extend_schema(tags=PROFILE_TAG, description=PROFILE_CUSTOMER_RETRIEVE_DESCRIPTION)
 class CustomerProfileListView(generics.ListAPIView):
     """
     API endpoint for listing customer profiles.
