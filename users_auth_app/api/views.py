@@ -1,7 +1,5 @@
 from django.contrib.auth import get_user_model
-from drf_spectacular.utils import (
-    extend_schema,
-)
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import generics, status
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -9,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .permissions import IsProfileOwnerOrReadOnly
-from .schema.base_schema import AUTH_TAG
+from .schema.base_schema import AUTH_TAG, PROFILE_TAG
 from .schema.login_schema import LOGIN_DESCRIPTION, LOGIN_EXAMPLES
 from .schema.profile_detail_retrieve_schema import (
     PROFILE_DETAIL_RETRIEVE_DESCRIPTION,
@@ -123,11 +121,28 @@ class LoginView(APIView):
         )
 
 
-@extend_schema(
-    tags=["Profile"],
-    description=PROFILE_DETAIL_RETRIEVE_DESCRIPTION,
-    parameters=PROFILE_DETAIL_RETRIEVE_PARAMETERS,
-    examples=PROFILE_DETAIL_RETRIEVE_EXAMPLES,
+@extend_schema(tags=PROFILE_TAG)
+@extend_schema_view(
+    get=extend_schema(
+        description=PROFILE_DETAIL_RETRIEVE_DESCRIPTION,
+        parameters=PROFILE_DETAIL_RETRIEVE_PARAMETERS,
+        responses={200: ProfileDetailSerializer},
+        examples=PROFILE_DETAIL_RETRIEVE_EXAMPLES,
+    ),
+    # put=extend_schema(
+    #     description=PROFILE_DETAIL_UPDATE_DESCRIPTION,
+    #     parameters=PROFILE_DETAIL_RETRIEVE_PARAMETERS,
+    #     request=ProfileDetailSerializer,
+    #     responses={200: ProfileDetailSerializer},
+    #     examples=PROFILE_DETAIL_UPDATE_EXAMPLES,
+    # ),
+    # patch=extend_schema(
+    #     description=PROFILE_DETAIL_PARTIAL_UPDATE_DESCRIPTION,
+    #     parameters=PROFILE_DETAIL_RETRIEVE_PARAMETERS,
+    #     request=ProfileDetailSerializer,
+    #     responses={200: ProfileDetailSerializer},
+    #     examples=PROFILE_DETAIL_PARTIAL_UPDATE_EXAMPLES,
+    # ),
 )
 class ProfileDetailView(generics.RetrieveUpdateAPIView):
     """
