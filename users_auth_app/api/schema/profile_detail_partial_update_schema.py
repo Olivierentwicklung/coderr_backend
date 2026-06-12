@@ -14,13 +14,8 @@ PROFILE_DETAIL_PARTIAL_UPDATE_DESCRIPTION = """
 
 ```json
 {
-  "first_name": "Max",
-  "last_name": "Mustermann",
-  "location": "Berlin",
-  "tel": "987654321",
-  "description": "Updated business description",
-  "working_hours": "10-18",
-  "email": "new_email@business.de"
+    "location": "Hamburg",
+    "tel": "987654321",
 }
 ```
 
@@ -35,7 +30,7 @@ Die Antwort enthält das aktualisierte Profil des Benutzers. Die Felder first_na
   "first_name": "Max",
   "last_name": "Mustermann",
   "file": "profile_picture.jpg",
-  "location": "Berlin",
+  "location": "Hamburg",
   "tel": "987654321",
   "description": "Updated business description",
   "working_hours": "10-18",
@@ -77,16 +72,10 @@ PROFILE_DETAIL_PARTIAL_UPDATE_PARAMETERS = [
 ]
 PROFILE_DETAIL_PARTIAL_UPDATE_EXAMPLES = [
     OpenApiExample(
-        "Customer Profile Update",
+        "Customer Profile Partial Update ",
         value={
-            "first_name": "Max",
-            "last_name": "Mustermann",
-            "file": None,
-            "location": "Berlin",
-            "tel": "123456789",
-            "description": "Neue Beschreibung",
-            "working_hours": "9-17",
-            "email": "new_email@business.de",
+            "location": "Hamburg",
+            "tel": "987654321",
         },
         request_only=True,
     ),
