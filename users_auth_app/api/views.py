@@ -27,6 +27,9 @@ from .schema.profile_detail_update_schema import (
 from .schema.profiles_business_retrieve_schema import (
     PROFILE_BUSINESS_RETRIEVE_DESCRIPTION,
 )
+from .schema.profiles_customer_retrieve_schema import (
+    PROFILE_CUSTOMER_RETRIEVE_DESCRIPTION,
+)
 from .schema.registration_schema import REGISTRATION_DESCRIPTION, REGISTRATION_EXAMPLES
 from .serializers import (
     BusinessProfileListSerializer,
@@ -187,7 +190,7 @@ class BusinessProfileListView(generics.ListAPIView):
         return User.objects.select_related("file").filter(type="business")
 
 
-@extend_schema(tags=PROFILE_TAG)
+@extend_schema(tags=PROFILE_TAG, description=PROFILE_CUSTOMER_RETRIEVE_DESCRIPTION)
 class CustomerProfileListView(generics.ListAPIView):
     """
     API endpoint for listing customer profiles.
