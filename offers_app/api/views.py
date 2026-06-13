@@ -1,7 +1,7 @@
 from django.db.models import Min, Prefetch
 from django.http import Http404
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import filters, generics, permissions, status
 from rest_framework.exceptions import APIException, ValidationError
 from rest_framework.response import Response
@@ -22,7 +22,12 @@ from .schema.base_schema import OFFERS_TAG
 from .schema.offers_retrieve_schema import OFFERS_RETRIEVE_DESCRIPTION
 
 
-@extend_schema(tags=OFFERS_TAG, description=OFFERS_RETRIEVE_DESCRIPTION)
+@extend_schema(tags=OFFERS_TAG)
+@extend_schema_view(
+    get=extend_schema(
+        description=OFFERS_RETRIEVE_DESCRIPTION,
+    ),
+)
 class OfferListCreateView(generics.ListCreateAPIView):
     """API view for listing and creating offers."""
 
