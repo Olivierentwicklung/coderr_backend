@@ -1,4 +1,4 @@
-ORDERS_PARTIAL_UPDATE_DESCRIPTION = """
+ORDERS_PARTIAL_UPDATE_BY_ID_DESCRIPTION = """
 
 **Description**: Aktualisiert den Status einer spezifischen Bestellung. Mögliche Statuswerte sind z.B. 'in_progress', 'completed', oder 'cancelled'.
 

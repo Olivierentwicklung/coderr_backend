@@ -15,8 +15,11 @@ from orders_app.models import Order
 
 from .schema.base_schema import ORDERS_TAG
 from .schema.orders_create_schema import ORDERS_CREATE_DESCRIPTION
+from .schema.orders_delete_by_id_schema import ORDERS_DELETE_BY_ID_DESCRIPTION
 from .schema.orders_list_schema import ORDERS_LIST_DESCRIPTION
-from .schema.orders_partial_update_schema import ORDERS_PARTIAL_UPDATE_DESCRIPTION
+from .schema.orders_partial_update_by_id_schema import (
+    ORDERS_PARTIAL_UPDATE_BY_ID_DESCRIPTION,
+)
 
 User = get_user_model()
 
@@ -91,9 +94,9 @@ class OrderListCreateView(generics.ListCreateAPIView):
 @extend_schema(tags=ORDERS_TAG)
 @extend_schema_view(
     patch=extend_schema(
-        description=ORDERS_PARTIAL_UPDATE_DESCRIPTION,
+        description=ORDERS_PARTIAL_UPDATE_BY_ID_DESCRIPTION,
     ),
-    # post=extend_schema(description=ORDERS_CREATE_DESCRIPTION),
+    delete=extend_schema(description=ORDERS_DELETE_BY_ID_DESCRIPTION),
 )
 class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
     """Update or delete a single order."""
