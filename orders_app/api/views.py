@@ -14,6 +14,7 @@ from orders_app.api.serializers import OrderSerializer, OrderStatusUpdateSeriali
 from orders_app.models import Order
 
 from .schema.base_schema import ORDERS_TAG
+from .schema.orders_create_schema import ORDERS_CREATE_DESCRIPTION
 from .schema.orders_list_schema import ORDERS_LIST_DESCRIPTION
 
 User = get_user_model()
@@ -24,7 +25,7 @@ User = get_user_model()
     get=extend_schema(
         description=ORDERS_LIST_DESCRIPTION,
     ),
-    # post=extend_schema(description=OFFERS_CREATE_DESCRIPTION),
+    post=extend_schema(description=ORDERS_CREATE_DESCRIPTION),
 )
 class OrderListCreateView(generics.ListCreateAPIView):
     """List related orders or create a new order from an offer detail."""
