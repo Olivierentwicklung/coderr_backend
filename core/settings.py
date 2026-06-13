@@ -162,10 +162,10 @@ REST_FRAMEWORK = {
 
 
 JAZZMIN_SETTINGS = {
-    "site_title": "DA & Olivier Coderr  Admin",
-    "site_header": "DA & Olivier Coderr  Administration",
-    "site_brand": "DA & Olivier Coderr ",
-    "welcome_sign": "Welcome to DA & Olivier Coderr  Admin",
+    "site_title": "DA & Olivier Coderr Admin",
+    "site_header": "DA & Olivier Coderr Administration",
+    "site_brand": "DA & Olivier Coderr",
+    "welcome_sign": "Welcome to DA & Olivier Coderr Admin",
     "copyright": "DA & Olivier Lowe",
 }
 
