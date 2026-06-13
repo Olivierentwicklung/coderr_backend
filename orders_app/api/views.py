@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import generics, status
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
@@ -13,10 +13,30 @@ from orders_app.api.permissions import IsBusinessUser, IsCustomerUser
 from orders_app.api.serializers import OrderSerializer, OrderStatusUpdateSerializer
 from orders_app.models import Order
 
+from .schema.base_schema import ORDERS_TAG
+from .schema.completed_order_count_by_business_user_id_schema import (
+    COMPLETED_ORDER_COUNT_BY_BUSINESS_USER_ID_DESCRIPTION,
+)
+from .schema.order_count_by_business_user_id_schema import (
+    ORDER_COUNT_BY_BUSINESS_USER_ID_DESCRIPTION,
+)
+from .schema.orders_create_schema import ORDERS_CREATE_DESCRIPTION
+from .schema.orders_delete_by_id_schema import ORDERS_DELETE_BY_ID_DESCRIPTION
+from .schema.orders_list_schema import ORDERS_LIST_DESCRIPTION
+from .schema.orders_partial_update_by_id_schema import (
+    ORDERS_PARTIAL_UPDATE_BY_ID_DESCRIPTION,
+)
+
 User = get_user_model()
 
 
-@extend_schema(tags=["Bestellungen (orders)"])
+@extend_schema(tags=ORDERS_TAG)
+@extend_schema_view(
+    get=extend_schema(
+        description=ORDERS_LIST_DESCRIPTION,
+    ),
+    post=extend_schema(description=ORDERS_CREATE_DESCRIPTION),
+)
 class OrderListCreateView(generics.ListCreateAPIView):
     """List related orders or create a new order from an offer detail."""
 
@@ -77,7 +97,13 @@ class OrderListCreateView(generics.ListCreateAPIView):
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 
 
-@extend_schema(tags=["Bestellungen (orders)"])
+@extend_schema(tags=ORDERS_TAG)
+@extend_schema_view(
+    patch=extend_schema(
+        description=ORDERS_PARTIAL_UPDATE_BY_ID_DESCRIPTION,
+    ),
+    delete=extend_schema(description=ORDERS_DELETE_BY_ID_DESCRIPTION),
+)
 class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
     """Update or delete a single order."""
 
@@ -135,12 +161,14 @@ class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-@extend_schema(tags=["Bestellungen (orders)"])
 class OrderCountView(APIView):
     """Return the number of in-progress orders for a business user."""
 
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        tags=ORDERS_TAG, description=ORDER_COUNT_BY_BUSINESS_USER_ID_DESCRIPTION
+    )
     def get(self, request, business_user_id):
         """Return the count of running orders for the given business user."""
         business_user = User.objects.filter(
@@ -165,12 +193,15 @@ class OrderCountView(APIView):
         )
 
 
-@extend_schema(tags=["Bestellungen (orders)"])
 class CompletedOrderCountView(APIView):
     """Return the number of completed orders for a business user."""
 
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        tags=ORDERS_TAG,
+        description=COMPLETED_ORDER_COUNT_BY_BUSINESS_USER_ID_DESCRIPTION,
+    )
     def get(self, request, business_user_id):
         """Return the count of completed orders for the given business user."""
         business_user = User.objects.filter(
