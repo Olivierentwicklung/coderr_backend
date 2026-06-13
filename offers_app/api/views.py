@@ -20,6 +20,7 @@ from offers_app.models import Offer, OfferDetail
 
 from .schema.base_schema import OFFERS_TAG
 from .schema.offers_create_schema import OFFERS_CREATE_DESCRIPTION
+from .schema.offers_delete_by_id_schema import OFFERS_DELETE_BY_ID_DESCRIPTION
 from .schema.offers_partial_update_by_id_schema import (
     OFFERS_PARTIAL_UPDATE_BY_ID_DESCRIPTION,
 )
@@ -100,6 +101,9 @@ class OfferListCreateView(generics.ListCreateAPIView):
     ),
     patch=extend_schema(
         description=OFFERS_PARTIAL_UPDATE_BY_ID_DESCRIPTION,
+    ),
+    delete=extend_schema(
+        description=OFFERS_DELETE_BY_ID_DESCRIPTION,
     ),
 )
 class OfferRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
