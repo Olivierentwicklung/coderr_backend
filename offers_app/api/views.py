@@ -22,17 +22,17 @@ from .schema.base_schema import OFFERS_TAG
 from .schema.offer_details_retrieve_schema import OFFER_DETAILS_RETRIEVE_DESCRIPTION
 from .schema.offers_create_schema import OFFERS_CREATE_DESCRIPTION
 from .schema.offers_delete_by_id_schema import OFFERS_DELETE_BY_ID_DESCRIPTION
+from .schema.offers_list_schema import OFFERS_LIST_DESCRIPTION
 from .schema.offers_partial_update_by_id_schema import (
     OFFERS_PARTIAL_UPDATE_BY_ID_DESCRIPTION,
 )
 from .schema.offers_retrieve_by_id_schema import OFFERS_RETRIEVE_BY_ID_DESCRIPTION
-from .schema.offers_retrieve_schema import OFFERS_RETRIEVE_DESCRIPTION
 
 
 @extend_schema(tags=OFFERS_TAG)
 @extend_schema_view(
     get=extend_schema(
-        description=OFFERS_RETRIEVE_DESCRIPTION,
+        description=OFFERS_LIST_DESCRIPTION,
     ),
     post=extend_schema(description=OFFERS_CREATE_DESCRIPTION),
 )

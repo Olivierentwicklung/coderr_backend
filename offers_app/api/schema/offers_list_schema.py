@@ -1,4 +1,4 @@
-OFFERS_RETRIEVE_DESCRIPTION = """
+OFFERS_LIST_DESCRIPTION = """
 
 **Description**: Dieser Endpunkt gibt eine Liste von Angeboten zurück. Jedes Angebot enthält eine Übersicht der Angebotsdetails, den minimalen Preis und die kürzeste Lieferzeit.
 
