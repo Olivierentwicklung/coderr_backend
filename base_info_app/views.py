@@ -11,15 +11,18 @@ from rest_framework.views import APIView
 from offers_app.models import Offer
 from reviews_app.models import Review
 
+from .api.schema.base_info_schema import BASE_INFO_DESCRIPTION
+from .api.schema.base_schema import BASE_INFO_TAG
+
 User = get_user_model()
 
 
-@extend_schema(tags=["Übergreifende Endpoints"])
 class BaseInfoView(APIView):
     """Return public platform-wide base statistics."""
 
     permission_classes = [AllowAny]
 
+    @extend_schema(tags=BASE_INFO_TAG, description=BASE_INFO_DESCRIPTION)
     def get(self, request):
         """Return review, rating, business profile, and offer statistics."""
         try:

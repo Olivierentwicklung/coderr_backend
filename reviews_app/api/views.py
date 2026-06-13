@@ -1,5 +1,5 @@
 from django.db import OperationalError
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import generics, status
 from rest_framework.response import Response
 
@@ -7,8 +7,22 @@ from reviews_app.api.permissions import IsAuthenticatedCustomerOrReadOnly, IsRev
 from reviews_app.api.serializers import ReviewSerializer
 from reviews_app.models import Review
 
+from .schema.base_schema import REVIEWS_TAG
+from .schema.reviews_create_schema import REVIEWS_CREATE_DESCRIPTION
+from .schema.reviews_delete_by_id_schema import REVIEWS_DELETE_BY_ID_DESCRIPTION
+from .schema.reviews_list_schema import REVIEWS_LIST_DESCRIPTION
+from .schema.reviews_partial_update_by_id_schema import (
+    REVIEWS_PARTIAL_UPDATE_BY_ID_DESCRIPTION,
+)
 
-@extend_schema(tags=["Bewertungen (reviews)"])
+
+@extend_schema(tags=REVIEWS_TAG)
+@extend_schema_view(
+    get=extend_schema(
+        description=REVIEWS_LIST_DESCRIPTION,
+    ),
+    post=extend_schema(description=REVIEWS_CREATE_DESCRIPTION),
+)
 class ReviewListCreateView(generics.ListCreateAPIView):
     """List reviews and allow authenticated customers to create reviews."""
 
@@ -49,13 +63,21 @@ class ReviewListCreateView(generics.ListCreateAPIView):
         serializer.save(reviewer=self.request.user)
 
 
-@extend_schema(tags=["Bewertungen (reviews)"])
+@extend_schema(tags=REVIEWS_TAG)
+@extend_schema_view(
+    patch=extend_schema(
+        description=REVIEWS_PARTIAL_UPDATE_BY_ID_DESCRIPTION,
+    ),
+    delete=extend_schema(description=REVIEWS_DELETE_BY_ID_DESCRIPTION),
+)
 class ReviewDetailView(generics.RetrieveUpdateDestroyAPIView):
     """Retrieve, update, and delete review instances."""
 
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     permission_classes = [IsReviewOwner]
+
+    http_method_names = ["patch", "delete"]
 
     def patch(self, request, *args, **kwargs):
         """Partially update rating and description for the review owner."""
