@@ -14,6 +14,12 @@ from orders_app.api.serializers import OrderSerializer, OrderStatusUpdateSeriali
 from orders_app.models import Order
 
 from .schema.base_schema import ORDERS_TAG
+from .schema.completed_order_count_by_business_user_id_schema import (
+    COMPLETED_ORDER_COUNT_BY_BUSINESS_USER_ID_DESCRIPTION,
+)
+from .schema.order_count_by_business_user_id_schema import (
+    ORDER_COUNT_BY_BUSINESS_USER_ID_DESCRIPTION,
+)
 from .schema.orders_create_schema import ORDERS_CREATE_DESCRIPTION
 from .schema.orders_delete_by_id_schema import ORDERS_DELETE_BY_ID_DESCRIPTION
 from .schema.orders_list_schema import ORDERS_LIST_DESCRIPTION
@@ -155,12 +161,14 @@ class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-@extend_schema(tags=ORDERS_TAG)
 class OrderCountView(APIView):
     """Return the number of in-progress orders for a business user."""
 
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        tags=ORDERS_TAG, description=ORDER_COUNT_BY_BUSINESS_USER_ID_DESCRIPTION
+    )
     def get(self, request, business_user_id):
         """Return the count of running orders for the given business user."""
         business_user = User.objects.filter(
@@ -185,12 +193,15 @@ class OrderCountView(APIView):
         )
 
 
-@extend_schema(tags=ORDERS_TAG)
 class CompletedOrderCountView(APIView):
     """Return the number of completed orders for a business user."""
 
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        tags=ORDERS_TAG,
+        description=COMPLETED_ORDER_COUNT_BY_BUSINESS_USER_ID_DESCRIPTION,
+    )
     def get(self, request, business_user_id):
         """Return the count of completed orders for the given business user."""
         business_user = User.objects.filter(
