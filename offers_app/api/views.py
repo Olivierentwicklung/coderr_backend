@@ -20,6 +20,7 @@ from offers_app.models import Offer, OfferDetail
 
 from .schema.base_schema import OFFERS_TAG
 from .schema.offers_create_schema import OFFERS_CREATE_DESCRIPTION
+from .schema.offers_retrieve_by_id_schema import OFFERS_RETRIEVE_BY_ID_DESCRIPTION
 from .schema.offers_retrieve_schema import OFFERS_RETRIEVE_DESCRIPTION
 
 
@@ -90,6 +91,11 @@ class OfferListCreateView(generics.ListCreateAPIView):
 
 
 @extend_schema(tags=OFFERS_TAG)
+@extend_schema_view(
+    get=extend_schema(
+        description=OFFERS_RETRIEVE_BY_ID_DESCRIPTION,
+    ),
+)
 class OfferRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     """API view for retrieving, updating, and deleting a single offer."""
 
