@@ -67,6 +67,8 @@ class ReviewDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ReviewSerializer
     permission_classes = [IsReviewOwner]
 
+    http_method_names = ["patch", "delete"]
+
     def patch(self, request, *args, **kwargs):
         """Partially update rating and description for the review owner."""
         try:

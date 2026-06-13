@@ -15,9 +15,6 @@ from .schema.profile_detail_partial_update_schema import (
 from .schema.profile_detail_retrieve_schema import (
     PROFILE_DETAIL_RETRIEVE_DESCRIPTION,
 )
-from .schema.profile_detail_update_schema import (
-    PROFILE_DETAIL_UPDATE_DESCRIPTION,
-)
 from .schema.profiles_business_retrieve_schema import (
     PROFILE_BUSINESS_RETRIEVE_DESCRIPTION,
 )
@@ -134,9 +131,6 @@ class LoginView(APIView):
     get=extend_schema(
         description=PROFILE_DETAIL_RETRIEVE_DESCRIPTION,
     ),
-    put=extend_schema(
-        description=PROFILE_DETAIL_UPDATE_DESCRIPTION,
-    ),
     patch=extend_schema(
         description=PROFILE_DETAIL_PARTIAL_UPDATE_DESCRIPTION,
     ),
@@ -152,6 +146,7 @@ class ProfileDetailView(generics.RetrieveUpdateAPIView):
     queryset = User.objects.all()
     serializer_class = ProfileDetailSerializer
     permission_classes = [IsAuthenticated, IsProfileOwnerOrReadOnly]
+    http_method_names = ["get", "patch"]
 
 
 @extend_schema(tags=PROFILE_TAG, description=PROFILE_BUSINESS_RETRIEVE_DESCRIPTION)
