@@ -18,8 +18,11 @@ from offers_app.api.serializers import (
 )
 from offers_app.models import Offer, OfferDetail
 
+from .schema.base_schema import OFFERS_TAG
+from .schema.offers_retrieve_schema import OFFERS_RETRIEVE_DESCRIPTION
 
-@extend_schema(tags=["Angebote (offers)"])
+
+@extend_schema(tags=OFFERS_TAG, description=OFFERS_RETRIEVE_DESCRIPTION)
 class OfferListCreateView(generics.ListCreateAPIView):
     """API view for listing and creating offers."""
 
@@ -79,7 +82,7 @@ class OfferListCreateView(generics.ListCreateAPIView):
         raise ValidationError({"ordering": "Invalid ordering field."})
 
 
-@extend_schema(tags=["Angebote (offers)"])
+@extend_schema(tags=OFFERS_TAG)
 class OfferRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     """API view for retrieving, updating, and deleting a single offer."""
 
@@ -148,7 +151,7 @@ class OfferRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
             )
 
 
-@extend_schema(tags=["Angebote (offers)"])
+@extend_schema(tags=OFFERS_TAG)
 class OfferDetailRetrieveView(generics.RetrieveAPIView):
     """API view for retrieving a single offer detail."""
 
