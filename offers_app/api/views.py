@@ -1,7 +1,7 @@
 from django.db.models import Min, Prefetch
 from django.http import Http404
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import filters, generics, permissions, status
 from rest_framework.exceptions import APIException, ValidationError
 from rest_framework.response import Response
@@ -18,8 +18,24 @@ from offers_app.api.serializers import (
 )
 from offers_app.models import Offer, OfferDetail
 
+from .schema.base_schema import OFFERS_TAG
+from .schema.offer_details_retrieve_schema import OFFER_DETAILS_RETRIEVE_DESCRIPTION
+from .schema.offers_create_schema import OFFERS_CREATE_DESCRIPTION
+from .schema.offers_delete_by_id_schema import OFFERS_DELETE_BY_ID_DESCRIPTION
+from .schema.offers_partial_update_by_id_schema import (
+    OFFERS_PARTIAL_UPDATE_BY_ID_DESCRIPTION,
+)
+from .schema.offers_retrieve_by_id_schema import OFFERS_RETRIEVE_BY_ID_DESCRIPTION
+from .schema.offers_retrieve_schema import OFFERS_RETRIEVE_DESCRIPTION
 
-@extend_schema(tags=["Angebote (offers)"])
+
+@extend_schema(tags=OFFERS_TAG)
+@extend_schema_view(
+    get=extend_schema(
+        description=OFFERS_RETRIEVE_DESCRIPTION,
+    ),
+    post=extend_schema(description=OFFERS_CREATE_DESCRIPTION),
+)
 class OfferListCreateView(generics.ListCreateAPIView):
     """API view for listing and creating offers."""
 
@@ -79,7 +95,18 @@ class OfferListCreateView(generics.ListCreateAPIView):
         raise ValidationError({"ordering": "Invalid ordering field."})
 
 
-@extend_schema(tags=["Angebote (offers)"])
+@extend_schema(tags=OFFERS_TAG)
+@extend_schema_view(
+    get=extend_schema(
+        description=OFFERS_RETRIEVE_BY_ID_DESCRIPTION,
+    ),
+    patch=extend_schema(
+        description=OFFERS_PARTIAL_UPDATE_BY_ID_DESCRIPTION,
+    ),
+    delete=extend_schema(
+        description=OFFERS_DELETE_BY_ID_DESCRIPTION,
+    ),
+)
 class OfferRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     """API view for retrieving, updating, and deleting a single offer."""
 
@@ -148,7 +175,7 @@ class OfferRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
             )
 
 
-@extend_schema(tags=["Angebote (offers)"])
+@extend_schema(tags=OFFERS_TAG, description=OFFER_DETAILS_RETRIEVE_DESCRIPTION)
 class OfferDetailRetrieveView(generics.RetrieveAPIView):
     """API view for retrieving a single offer detail."""
 
