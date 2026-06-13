@@ -19,6 +19,7 @@ from offers_app.api.serializers import (
 from offers_app.models import Offer, OfferDetail
 
 from .schema.base_schema import OFFERS_TAG
+from .schema.offers_create_schema import OFFERS_CREATE_DESCRIPTION
 from .schema.offers_retrieve_schema import OFFERS_RETRIEVE_DESCRIPTION
 
 
@@ -27,6 +28,7 @@ from .schema.offers_retrieve_schema import OFFERS_RETRIEVE_DESCRIPTION
     get=extend_schema(
         description=OFFERS_RETRIEVE_DESCRIPTION,
     ),
+    post=extend_schema(description=OFFERS_CREATE_DESCRIPTION),
 )
 class OfferListCreateView(generics.ListCreateAPIView):
     """API view for listing and creating offers."""

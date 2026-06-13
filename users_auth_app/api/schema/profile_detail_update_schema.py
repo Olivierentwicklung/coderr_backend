@@ -14,6 +14,7 @@ PROFILE_DETAIL_UPDATE_DESCRIPTION = """
 {
   "first_name": "Max",
   "last_name": "Mustermann",
+  "file": "profile_picture.jpg",
   "location": "Berlin",
   "tel": "987654321",
   "description": "Updated business description",
