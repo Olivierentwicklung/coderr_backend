@@ -19,6 +19,7 @@ from offers_app.api.serializers import (
 from offers_app.models import Offer, OfferDetail
 
 from .schema.base_schema import OFFERS_TAG
+from .schema.offer_details_retrieve_schema import OFFER_DETAILS_RETRIEVE_DESCRIPTION
 from .schema.offers_create_schema import OFFERS_CREATE_DESCRIPTION
 from .schema.offers_delete_by_id_schema import OFFERS_DELETE_BY_ID_DESCRIPTION
 from .schema.offers_partial_update_by_id_schema import (
@@ -174,7 +175,7 @@ class OfferRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
             )
 
 
-@extend_schema(tags=OFFERS_TAG)
+@extend_schema(tags=OFFERS_TAG, description=OFFER_DETAILS_RETRIEVE_DESCRIPTION)
 class OfferDetailRetrieveView(generics.RetrieveAPIView):
     """API view for retrieving a single offer detail."""
 
