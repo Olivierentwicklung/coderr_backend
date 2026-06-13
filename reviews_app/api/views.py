@@ -8,6 +8,7 @@ from reviews_app.api.serializers import ReviewSerializer
 from reviews_app.models import Review
 
 from .schema.base_schema import REVIEWS_TAG
+from .schema.reviews_create_schema import REVIEWS_CREATE_DESCRIPTION
 from .schema.reviews_list_schema import REVIEWS_LIST_DESCRIPTION
 
 
@@ -16,7 +17,7 @@ from .schema.reviews_list_schema import REVIEWS_LIST_DESCRIPTION
     get=extend_schema(
         description=REVIEWS_LIST_DESCRIPTION,
     ),
-    # delete=extend_schema(description=ORDERS_DELETE_BY_ID_DESCRIPTION),
+    post=extend_schema(description=REVIEWS_CREATE_DESCRIPTION),
 )
 class ReviewListCreateView(generics.ListCreateAPIView):
     """List reviews and allow authenticated customers to create reviews."""

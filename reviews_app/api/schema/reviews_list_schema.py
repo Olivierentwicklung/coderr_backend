@@ -21,7 +21,7 @@ REVIEWS_LIST_DESCRIPTION = """
 
 ### Success Response
 
-Die Antwort enthält eine Liste aller Bewertungen, die gefiltert und geordnet werden können..
+Die Antwort enthält eine Liste aller Bewertungen, die gefiltert und geordnet werden können.
 
 ```json
 [
