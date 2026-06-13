@@ -10,6 +10,9 @@ from reviews_app.models import Review
 from .schema.base_schema import REVIEWS_TAG
 from .schema.reviews_create_schema import REVIEWS_CREATE_DESCRIPTION
 from .schema.reviews_list_schema import REVIEWS_LIST_DESCRIPTION
+from .schema.reviews_partial_update_by_id_schema import (
+    REVIEWS_PARTIAL_UPDATE_BY_ID_DESCRIPTION,
+)
 
 
 @extend_schema(tags=REVIEWS_TAG)
@@ -60,6 +63,12 @@ class ReviewListCreateView(generics.ListCreateAPIView):
 
 
 @extend_schema(tags=REVIEWS_TAG)
+@extend_schema_view(
+    patch=extend_schema(
+        description=REVIEWS_PARTIAL_UPDATE_BY_ID_DESCRIPTION,
+    ),
+    # post=extend_schema(description=REVIEWS_CREATE_DESCRIPTION),
+)
 class ReviewDetailView(generics.RetrieveUpdateDestroyAPIView):
     """Retrieve, update, and delete review instances."""
 
