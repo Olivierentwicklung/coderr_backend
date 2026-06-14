@@ -22,6 +22,7 @@ Coderr enables customers to purchase services from business users, manage orders
 - 📊 Business user statistics
 - 🔍 Public profile discovery
 - ⚙️ RESTful API powered by Django REST Framework
+- 📖 DRF-spectacular API Documentation
 
 ---
 
@@ -33,6 +34,7 @@ Coderr enables customers to purchase services from business users, manage orders
 - pip / virtualenv
 - SQLite (default)
 - Pytest + Coverage
+- DRF-spectacular API Documentation
 - Optional: Postman
 
 ---
@@ -193,38 +195,52 @@ coderr_backend/
 │   └── wsgi.py
 │
 ├── base_info_app/
+│   ├── api/
+│   │    ├── schema
+│   │
 │   ├── views.py
 │   └── urls.py
 │
 ├── users_auth_app/
 │   ├── models.py
-│   ├── serializers.py
-│   ├── views.py
-│   └── urls.py
+│   └── api/
+│       ├── schema
+│       ├── serializers.py
+│       ├── views.py
+│       ├── urls.py
+│       └── permissions.py
 │
 ├── uploads_app/
 │   ├── models.py
-│   ├── serializers.py
-│   ├── views.py
-│   └── urls.py
 │
 ├── offers_app/
 │   ├── models.py
-│   ├── serializers.py
-│   ├── views.py
-│   └── urls.py
+│   └── api/
+│       ├── schema
+│       ├── filters.py
+│       ├── pagination.py
+│       ├── serializers.py
+│       ├── views.py
+│       ├── urls.py
+│       └── permissions.py
 │
 ├── orders_app/
 │   ├── models.py
-│   ├── serializers.py
-│   ├── views.py
-│   └── urls.py
+│   └── api/
+│       ├── schema
+│       ├── serializers.py
+│       ├── views.py
+│       ├── urls.py
+│       └── permissions.py
 │
 ├── reviews_app/
 │   ├── models.py
-│   ├── serializers.py
-│   ├── views.py
-│   └── urls.py
+│   └── api/
+│       ├── schema
+│       ├── serializers.py
+│       ├── views.py
+│       ├── urls.py
+│       └── permissions.py
 │
 ├── tests/
 │   ├── base_info_app/
@@ -319,6 +335,7 @@ FileUpload 1 ─── M Offer
 - Pytest
 - Coverage
 - Postman
+- DRF-spectacular API Documentation
 
 ---
 
@@ -335,3 +352,4 @@ Coderr was developed as a freelance marketplace backend project to practice and 
 - Testing with Pytest
 - Clean project organization
 - Real-world marketplace workflows
+- DRF-spectacular API Documentation
