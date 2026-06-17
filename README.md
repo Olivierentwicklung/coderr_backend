@@ -23,6 +23,7 @@ Coderr enables customers to purchase services from business users, manage orders
 - 🔍 Public profile discovery
 - ⚙️ RESTful API powered by Django REST Framework
 - 📖 DRF-spectacular API Documentation
+- 🐳 Docker Support
 
 ---
 
@@ -35,6 +36,7 @@ Coderr enables customers to purchase services from business users, manage orders
 - SQLite (default)
 - Pytest + Coverage
 - DRF-spectacular API Documentation
+- Docker Support
 - Optional: Postman
 
 ---
@@ -336,6 +338,7 @@ FileUpload 1 ─── M Offer
 - Coverage
 - Postman
 - DRF-spectacular API Documentation
+- Docker Support
 
 ---
 
@@ -353,3 +356,4 @@ Coderr was developed as a freelance marketplace backend project to practice and 
 - Clean project organization
 - Real-world marketplace workflows
 - DRF-spectacular API Documentation
+- Docker Support
