@@ -26,11 +26,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()  # Loads variables from .env
 SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG")
+if not SECRET_KEY:
+    raise ValueError("SECRET_KEY is not set")
 
-# Liest die Hosts aus Docker, standardmäßig 'localhost' und '127.0.0.1'
-# ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+DEBUG = os.getenv("DEBUG", "True") == "True"
+
+ALLOWED_HOSTS = os.getenv(
+    "ALLOWED_HOSTS",
+    "localhost,127.0.0.1",
+).split(",")
 
 
 # Application definition
