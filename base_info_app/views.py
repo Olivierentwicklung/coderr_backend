@@ -25,29 +25,22 @@ class BaseInfoView(APIView):
     @extend_schema(tags=BASE_INFO_TAG, description=BASE_INFO_DESCRIPTION)
     def get(self, request):
         """Return review, rating, business profile, and offer statistics."""
-        try:
-            review_count = Review.objects.count()
-            average_rating = Review.objects.aggregate(avg_rating=Avg("rating"))[
-                "avg_rating"
-            ]
-            business_profile_count = User.objects.filter(type="business").count()
-            offer_count = Offer.objects.count()
+        review_count = Review.objects.count()
+        average_rating = Review.objects.aggregate(avg_rating=Avg("rating"))[
+            "avg_rating"
+        ]
+        business_profile_count = User.objects.filter(type="business").count()
+        offer_count = Offer.objects.count()
 
-            return Response(
-                {
-                    "review_count": review_count,
-                    "average_rating": self._format_average_rating(average_rating),
-                    "business_profile_count": business_profile_count,
-                    "offer_count": offer_count,
-                },
-                status=status.HTTP_200_OK,
-            )
-
-        except Exception:
-            return Response(
-                {"detail": "Internal server error."},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
+        return Response(
+            {
+                "review_count": review_count,
+                "average_rating": self._format_average_rating(average_rating),
+                "business_profile_count": business_profile_count,
+                "offer_count": offer_count,
+            },
+            status=status.HTTP_200_OK,
+        )
 
     def _format_average_rating(self, average_rating):
         """Return the average rating rounded to one decimal place."""
