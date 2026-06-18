@@ -34,4 +34,4 @@ jobs:
         run: pytest --cov=. --cov-fail-under=98
 
       - name: Build Docker image
-        run: docker build -t django-app:test .
+        run: docker build -t coderr_backend:test .
