@@ -4,6 +4,7 @@
 ![DRF](https://img.shields.io/badge/DRF-3.x-blue)
 ![Auth](https://img.shields.io/badge/Auth-Token-orange)
 ![Status](https://img.shields.io/badge/Project-Active-brightgreen)
+![CI](https://github.com/Olivierentwicklung/coderr_backend/actions/workflows/ci.yml/badge.svg)
 
 A modern freelance marketplace backend built with Django REST Framework.
 
