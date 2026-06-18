@@ -1,1 +1,7 @@
+[MAIN]
 load-plugins=pylint_django
+django-settings-module=core.settings
+
+[MESSAGES CONTROL]
+disable=
+    import-outside-toplevel
