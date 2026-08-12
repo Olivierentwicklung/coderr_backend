@@ -15,6 +15,13 @@ jobs:
       SERVICE: ${{ secrets.GCP_SERVICE }}
       REPOSITORY: ${{ secrets.GCP_REPOSITORY }}
       IMAGE: coderr-backend
+      MIGRATION_JOB: coderr-backend-test-migrate
+      CLOUD_SQL_CONNECTION_NAME: coderr-test:europe-west3:coderr-postgres-test
+      RUNTIME_SERVICE_ACCOUNT: coderr-run-test@coderr-test.iam.gserviceaccount.com
+      DB_NAME: coderr
+      DB_USER: coderr_app
+      DB_PASSWORD_SECRET: coderr-db-password-test
+      SECRET_KEY_SECRET: coderr-secret-key-test
 
     steps:
       - name: Checkout code
@@ -39,10 +46,43 @@ jobs:
         run: |
           docker push $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:${{ github.sha }}
 
+      - name: Configure migration job
+        run: |
+          if gcloud run jobs describe "$MIGRATION_JOB" --region "$REGION" >/dev/null 2>&1; then
+            JOB_ACTION=update
+          else
+            JOB_ACTION=create
+          fi
+
+          gcloud run jobs "$JOB_ACTION" "$MIGRATION_JOB" \
+            --project "$PROJECT_ID" \
+            --region "$REGION" \
+            --image "$REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:${{ github.sha }}" \
+            --service-account "$RUNTIME_SERVICE_ACCOUNT" \
+            --set-cloudsql-instances "$CLOUD_SQL_CONNECTION_NAME" \
+            --set-env-vars "DB_NAME=$DB_NAME,DB_USER=$DB_USER,DB_HOST=/cloudsql/$CLOUD_SQL_CONNECTION_NAME,DB_PORT=5432,DEBUG=False,ALLOWED_HOSTS=localhost,CSRF_TRUSTED_ORIGINS=http://localhost" \
+            --set-secrets "DB_PASSWORD=$DB_PASSWORD_SECRET:latest,SECRET_KEY=$SECRET_KEY_SECRET:latest" \
+            --command python \
+            --args manage.py,migrate,--noinput \
+            --max-retries 1 \
+            --task-timeout 300s \
+            --quiet
+
+      - name: Run database migrations
+        run: |
+          gcloud run jobs execute "$MIGRATION_JOB" \
+            --project "$PROJECT_ID" \
+            --region "$REGION" \
+            --wait
+
       - name: Deploy to Cloud Run TEST
         run: |
           gcloud run deploy $SERVICE \
             --image $REGION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:${{ github.sha }} \
             --region $REGION \
             --platform managed \
+            --service-account "$RUNTIME_SERVICE_ACCOUNT" \
+            --add-cloudsql-instances "$CLOUD_SQL_CONNECTION_NAME" \
+            --update-env-vars "DB_NAME=$DB_NAME,DB_USER=$DB_USER,DB_HOST=/cloudsql/$CLOUD_SQL_CONNECTION_NAME,DB_PORT=5432" \
+            --update-secrets "DB_PASSWORD=$DB_PASSWORD_SECRET:latest,SECRET_KEY=$SECRET_KEY_SECRET:latest" \
             --allow-unauthenticated

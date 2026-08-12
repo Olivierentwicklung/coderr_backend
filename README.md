@@ -34,11 +34,79 @@ Coderr enables customers to purchase services from business users, manage orders
 
 - Python 3.12+
 - pip / virtualenv
-- SQLite (default)
+- PostgreSQL 17 (Docker Desktop recommended)
 - Pytest + Coverage
 - DRF-spectacular API Documentation
 - Docker Support
 - Optional: Postman
+
+---
+
+### Run Locally with Docker Desktop
+
+Docker Desktop is the recommended way to run the complete application locally.
+It starts Django, PostgreSQL, and a one-time migration container. PostgreSQL data
+is retained in a named Docker volume when the containers are stopped.
+
+1. Copy the environment template:
+
+```bash
+# Linux / macOS
+cp .env.template .env
+
+# Windows PowerShell
+Copy-Item .env.template .env
+```
+
+2. Replace the placeholder values in `.env`. Keep `DB_HOST=db` when Django runs
+   through Docker Compose.
+
+3. Build and start the application:
+
+```bash
+docker compose up --build -d
+```
+
+The database health check runs first, Django migrations run automatically, and
+the web service starts only after the migrations succeed.
+
+Open the application at:
+
+```text
+http://localhost:8000
+```
+
+Useful commands:
+
+```bash
+# Show container status
+docker compose ps
+
+# Follow application and database logs
+docker compose logs -f web db migrate
+
+# Create a Django administrator
+docker compose exec web python manage.py createsuperuser
+
+# Run tests (tests use in-memory SQLite)
+docker compose exec web pytest
+
+# Stop containers while preserving PostgreSQL data
+docker compose down
+
+# Rebuild after dependency or Dockerfile changes
+docker compose up --build -d
+```
+
+To permanently remove the local PostgreSQL data and start with an empty database:
+
+```bash
+docker compose down -v
+```
+
+Warning: `docker compose down -v` deletes the local PostgreSQL volume and all data
+stored in it. Changing `DB_NAME`, `DB_USER`, or `DB_PASSWORD` after the volume was
+created does not update the existing PostgreSQL account automatically.
 
 ---
 
@@ -61,6 +129,8 @@ pip install -r requirements.txt
 
 cp .env.template .env
      - Open the new .env file and replace the placeholders with your actual local secrets.
+     - Set DB_HOST=127.0.0.1 when Django runs outside Docker.
+     - Ensure PostgreSQL is running and the configured database and user exist.
 
 python manage.py migrate
 
@@ -334,7 +404,8 @@ FileUpload 1 ─── M Offer
 - Django
 - Django REST Framework
 - DRF Token Authentication
-- SQLite
+- PostgreSQL (application runtime)
+- SQLite (automated tests only)
 - Pytest
 - Coverage
 - Postman

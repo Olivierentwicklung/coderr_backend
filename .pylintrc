@@ -1,6 +1,6 @@
 [MAIN]
 load-plugins=pylint_django
-django-settings-module=core.settings
+django-settings-module=core.test_settings
 ignore=migrations
 
 [MESSAGES CONTROL]

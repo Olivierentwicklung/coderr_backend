@@ -12,6 +12,7 @@ jobs:
       SECRET_KEY: django-insecure-ci-key
       DEBUG: "False"
       ALLOWED_HOSTS: localhost,127.0.0.1
+      DJANGO_SETTINGS_MODULE: core.test_settings
 
     steps:
       - name: Checkout code
