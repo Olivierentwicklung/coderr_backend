@@ -10,6 +10,8 @@ A modern freelance marketplace backend built with Django REST Framework.
 
 Coderr enables customers to purchase services from business users, manage orders, leave reviews, and maintain professional profiles through a clean RESTful API architecture.
 
+Frontend: [Coderr Frontend](https://olivierentwicklung.github.io/coderr_frontend/)
+
 ---
 
 ## 🚀 Features

@@ -78,12 +78,13 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:5500",
-    "http://localhost:5500",
-    "http://127.0.0.1:4200",
-    "http://localhost:4200",
-]
+CORS_ALLOWED_ORIGINS = os.getenv(
+    "CORS_ALLOWED_ORIGINS",
+    (
+        "http://127.0.0.1:5500,http://localhost:5500,"
+        "http://127.0.0.1:4200,http://localhost:4200"
+    ),
+).split(",")
 
 ROOT_URLCONF = "core.urls"
 
