@@ -131,9 +131,9 @@ else:
         if not os.getenv(variable)
     ]
     if missing_database_variables:
-        missing_variables = ", ".join(missing_database_variables)
+        MISSING_VARIABLES = ", ".join(missing_database_variables)
         raise ValueError(
-            f"Missing required PostgreSQL environment variables: {missing_variables}"
+            f"Missing required PostgreSQL environment variables: {MISSING_VARIABLES}"
         )
 
     DATABASES = {
