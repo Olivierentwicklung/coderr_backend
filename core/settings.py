@@ -110,12 +110,43 @@ WSGI_APPLICATION = "core.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+if os.getenv("DJANGO_SETTINGS_MODULE") == "core.test_settings":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": ":memory:",
+        }
     }
-}
+else:
+    required_database_variables = (
+        "DB_NAME",
+        "DB_USER",
+        "DB_PASSWORD",
+        "DB_HOST",
+        "DB_PORT",
+    )
+    missing_database_variables = [
+        variable
+        for variable in required_database_variables
+        if not os.getenv(variable)
+    ]
+    if missing_database_variables:
+        missing_variables = ", ".join(missing_database_variables)
+        raise ValueError(
+            f"Missing required PostgreSQL environment variables: {missing_variables}"
+        )
+
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.environ["DB_NAME"],
+            "USER": os.environ["DB_USER"],
+            "PASSWORD": os.environ["DB_PASSWORD"],
+            "HOST": os.environ["DB_HOST"],
+            "PORT": os.environ["DB_PORT"],
+            "CONN_MAX_AGE": 60,
+        }
+    }
 
 
 # Password validation
